@@ -30,7 +30,7 @@ jobs:
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          mode: review
+          mode: commit
       # Run Tests 
       - name: Test & Collect Code Coverage    
         uses: maboesanman/rust-codecov@v0
