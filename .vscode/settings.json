@@ -1,5 +1,6 @@
 {
     "rust-analyzer.linkedProjects": [
-        ".\\badstack\\Cargo.toml"
+        ".\\badstack\\Cargo.toml",
+        ".\\toughlist\\Cargo.toml"
     ]
 }
