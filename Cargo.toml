@@ -3,5 +3,7 @@ resolver = "2"
 
 members = [
     "badstack",
-    "toughlist"
+    "toughlist",
+    "reflist",
+    "sloppydeque"
 ]
