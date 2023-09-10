@@ -1,0 +1,53 @@
+name: Quality Assurance
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+jobs:
+    RunTestSuites:
+
+        env:
+            GH_TOKEN: ${{github.token}}
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v2
+
+            - name: Install Github CLI
+              run: |
+                sudo apt update
+                sudo apt install gh
+
+            - name: Download RustUp
+              run: |
+                curl https://sh.rustup.rs -sSf | sh -s -- -y
+                rustup toolchain install nightly --component miri
+                rustup override set nightly
+                rustup component add rustfmt
+                rustup component add clippy
+                cargo miri setup
+
+            - name: Format Code
+              run: |
+                echo "TODO: Format Code"
+
+            - name: Commit Formatted Code
+              run: |
+                echo "TODO: Implement Commit"
+
+            - name: Run Test Suite
+              run: |
+                echo "TODO: Run Test Suite"
+            
+            - name: "Leave PR Comment With Test Results"
+              run: |
+                echo "TODO: Leave Test Results"
+            
+            - name: "Add Labels If Needed"
+              run: |
+                echo "TODO: Add Labels"
+            
+            
