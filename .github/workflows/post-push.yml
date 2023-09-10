@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      GH_TOKEN: ${{github.token}}
       BRANCHTOMERGE: main
       LABELS: automated-ci-review
       REVIEWBRANCH: review-${{github.triggering_actor}}-${{github.sha}}
