@@ -13,6 +13,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
   # This workflow contains a single job called "build"
   build:
     # permissions for the job
@@ -36,9 +37,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           mode: commit
-      # Run Tests 
-      - name: Test & Collect Code Coverage    
-        uses: maboesanman/rust-codecov@v0
       # Create PR On Main
       - name: Create PR
         uses: peter-evans/create-pull-request@v5.0.2
