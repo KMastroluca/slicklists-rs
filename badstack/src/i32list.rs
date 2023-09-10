@@ -16,6 +16,7 @@ enum I32Link {
     More(Box<I32Node>),
 }
 
+
 // Implement List
 impl I32List {
     // Create A New, Empty List
@@ -49,6 +50,7 @@ impl I32List {
         }
     }
 
+
     // Private: Pop A Node Off The Stack For Use With Custom Drop Fn
     fn pop_node(&mut self) -> I32Link {
         mem::replace(&mut self.head, I32Link::Empty)
@@ -62,6 +64,7 @@ impl Drop for I32List {
         while let I32Link::More(_) = self.pop_node() {}
     }
 }
+
 
 #[cfg(test)]
 mod test {
