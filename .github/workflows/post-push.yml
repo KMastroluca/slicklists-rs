@@ -45,6 +45,7 @@ jobs:
         with:
             token: ${{secrets.GITHUB_TOKEN}}
             commit-message: CI Processing For Auto-PR To Main
+            base: main
             branch: valid-revisions
             title: (CI) - ${{github.actor}} - ${{github.sha}} - ${{github.event.head_commit.timestamp}}
             body: |
