@@ -48,13 +48,11 @@ jobs:
         run: |
           echo "(-) Failed To Create Review Branch : ${{env.REVIEWBRANCH}}"
           exit 1
-      - name: Commit Source To Review Branch ${{env.REVIEWBRANCH}}
+      - name: Push Source To Review Branch ${{env.REVIEWBRANCH}}
         run: |
-          echo "(*) Attempting To Commit To Review Branch : ${{env.REVIEWBRANCH}}"
+          echo "(*) Trying To Push Source To Review Branch : ${{env.REVIEWBRANCH}}"
           git status
-          git add .
-          git commit -M ${{env.REVIEWCOMMITMSG}}
-          git push
+          git push origin ${{env.REVIEWBRANCH}}
 
       - name: Check Success
         if: ${{ !success() }}
