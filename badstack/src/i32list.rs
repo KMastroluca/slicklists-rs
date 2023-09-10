@@ -49,24 +49,19 @@ impl I32List {
         }
     }
 
-
     // Private: Pop A Node Off The Stack For Use With Custom Drop Fn
     fn pop_node(&mut self) -> I32Link {
         mem::replace(&mut self.head, I32Link::Empty)
     }
-
 }
 
-
-// Custom Drop Implementation 
+// Custom Drop Implementation
 impl Drop for I32List {
-
     fn drop(&mut self) {
         // Iterate Thru Just Popping Off Every Element In The List
         while let I32Link::More(_) = self.pop_node() {}
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -101,5 +96,4 @@ mod test {
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
     }
-
 }
