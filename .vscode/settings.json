@@ -2,5 +2,8 @@
     "rust-analyzer.linkedProjects": [
         ".\\badstack\\Cargo.toml",
         ".\\toughlist\\Cargo.toml"
-    ]
+    ],
+    "editor.tabCompletion": "on",
+    "diffEditor.codeLens": true,
+    "MutableAI.upsell": true
 }
