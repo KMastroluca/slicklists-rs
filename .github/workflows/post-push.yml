@@ -35,20 +35,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           mode: commit
-      # Run Tests 
-      - name: Test & Collect Code Coverage    
-        uses: maboesanman/rust-codecov@v0
-      # Create PR On Main
-      - name: Create PR
-        uses: peter-evans/create-pull-request@v5.0.2
-        with:
-            token: ${{secrets.GITHUB_TOKEN}}
-            base: main
-            branch: ${{github.sha}}
-            title: Automated PR From Development Branch
-            body: |
-              This PR Was Generated Because ${{github.actor}}
-              Pushed A Commit To The Development Branch Which Seemingly
-              Passed All Tests In The Current Workflow ${{github.workflow_ref}}.
-              Commit SHA: ${{github.sha}}
-              Commit Message: ${{github.event.head_commit.message}} ${{github.event.head_commit.timestamp}}
+
