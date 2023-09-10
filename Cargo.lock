@@ -7,11 +7,11 @@ name = "badstack"
 version = "0.0.0"
 
 [[package]]
-name = "reflist"
+name = "dubdeque"
 version = "0.0.0"
 
 [[package]]
-name = "sloppydeque"
+name = "reflist"
 version = "0.0.0"
 
 [[package]]
