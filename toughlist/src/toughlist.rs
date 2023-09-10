@@ -18,6 +18,8 @@ struct Node<T> {
     next: Link<T>,
 }
 
+
+
 // Implement List
 impl<T> ToughList<T> {
     // Create A New, Empty List
