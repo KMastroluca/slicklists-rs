@@ -44,8 +44,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5.0.2
         with:
             token: ${{secrets.GITHUB_TOKEN}}
-            branch: main
-            title: Automated PR From Development Branch
+            commit-message: CI Processing For Auto-PR To Main
+            branch: valid-revisions
+            title: (CI) - ${{github.actor}} - ${{github.sha}} - ${{github.event.head_commit.timestamp}}
             body: |
               This PR Was Generated Because ${{github.actor}}
               Pushed A Commit To The Development Branch Which Seemingly
