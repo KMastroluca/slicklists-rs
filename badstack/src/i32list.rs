@@ -16,6 +16,11 @@ enum I32Link {
     More(Box<I32Node>),
 }
 
+struct lame {
+    i : u32,
+}
+
+
 // Implement List
 impl I32List {
     // Create A New, Empty List
