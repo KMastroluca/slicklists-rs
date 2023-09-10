@@ -17,9 +17,8 @@ enum I32Link {
 }
 
 struct lame {
-    i : u32,
+    i: u32,
 }
-
 
 // Implement List
 impl I32List {
