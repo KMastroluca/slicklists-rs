@@ -76,6 +76,7 @@ jobs:
           PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{env.PRBODY}}" )
           echo "::set-output name=number::$PR_URL"
           gh pr edit "$PR_URL" --add-label report
+          gh pr edit "$PR_URL" --add-label automated-pr
       
       - name: Check Success
         if: ${{ !success() }}
