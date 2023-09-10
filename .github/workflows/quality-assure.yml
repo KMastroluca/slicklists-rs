@@ -1,11 +1,11 @@
-name: Quality Assurance
+name: QualityAssurance
 
 on:
     pull_request:
         types: [opened, synchronize, reopened]
 
 jobs:
-    RunTestSuites:
+    AssureCodeQuality:
 
         env:
             GH_TOKEN: ${{github.token}}
