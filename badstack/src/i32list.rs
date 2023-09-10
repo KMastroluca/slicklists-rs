@@ -65,6 +65,7 @@ impl Drop for I32List {
         // Iterate Thru Just Popping Off Every Element In The List
         while let I32Link::More(_) = self.pop_node() {}
     }
+}
 
 
 #[cfg(test)]
@@ -100,4 +101,5 @@ mod test {
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
     }
+
 }
