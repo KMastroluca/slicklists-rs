@@ -73,7 +73,7 @@ jobs:
         id: pr
         run: |
           echo "(*) Creating Pull Request"
-          PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{env.PRBODY}}"  --fill)
+          PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{env.PRBODY}}" )
           PR_NUMBER=$(echo $PR_URL | awk -F'/' '{print \$7}')
           echo "::set-output name=number::$PR_NUMBER"
           gh pr edit $PR_NUMBER --add-label report
