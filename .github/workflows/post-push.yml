@@ -22,7 +22,7 @@ jobs:
     env:
       GH_TOKEN: ${{github.token}}
       BRANCHTOMERGE: main
-      LABELS: automated-ci-review
+      LABELS: automated pr, report
       REVIEWBRANCH: review-${{github.triggering_actor}}-${{github.sha}}
       REVIEWCOMMITMSG: (CI) Automated Review Branch Commit
       PRTITLE: (CI) - Automated Pull Request For Review ${{github.event.head_commit.author}} ${{github.sha}}
