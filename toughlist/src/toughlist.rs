@@ -86,7 +86,7 @@ impl<T> ToughList<T> {
     pub fn iter(&self) -> Iter<'_, T> {
         // self.head.as_deref() ------------------v
         Iter {
-            next: self.head.as_ref().map::<&Node<T>, _>(|node| &node),
+            next: self.head.as_deref(),
         }
     }
 }
