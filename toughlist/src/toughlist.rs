@@ -8,7 +8,7 @@ pub struct Iter<'a, T> {
 }
 
 pub struct IterMut<'a, T> {
-    next: Option<&'a mut Node<T>>
+    next: Option<&'a mut Node<T>>,
 }
 
 pub struct ToughList<T> {
@@ -86,7 +86,9 @@ impl<T> Iterator for IntoIter<T> {
 
 impl<T> ToughList<T> {
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
-        IterMut { next: self.head.as_deref_mut() }
+        IterMut {
+            next: self.head.as_deref_mut(),
+        }
     }
 }
 

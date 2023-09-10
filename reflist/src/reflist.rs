@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-
 pub struct RefList<T> {
     head: Link<T>,
 }
@@ -9,36 +8,33 @@ type Link<T> = Option<Rc<Node<T>>>;
 
 struct Node<T> {
     elem: T,
-    next: Link<T>
+    next: Link<T>,
 }
 
-
 impl<T> RefList<T> {
-
-
     pub fn new() -> Self {
         RefList { head: None }
     }
 
-    pub fn prepend(&self, elem:T) -> RefList<T> {
+    pub fn prepend(&self, elem: T) -> RefList<T> {
         RefList {
             head: Some(Rc::new(Node {
                 elem: elem,
-                next: self.head.clone()
-            }))
+                next: self.head.clone(),
+            })),
         }
     }
 
     pub fn tail(&self) -> RefList<T> {
-        RefList { head: self.head.as_ref().and_then(|node| node.next.clone()) }
+        RefList {
+            head: self.head.as_ref().and_then(|node| node.next.clone()),
+        }
     }
 
     pub fn head(&self) -> Option<&T> {
         self.head.as_ref().map(|node| &node.elem)
     }
-
 }
-
 
 // Iter Implement
 pub struct Iter<'a, T> {
@@ -47,12 +43,13 @@ pub struct Iter<'a, T> {
 
 impl<T> RefList<T> {
     pub fn iter(&self) -> Iter<'_, T> {
-        Iter { next: self.head.as_deref() }
+        Iter {
+            next: self.head.as_deref(),
+        }
     }
 }
- 
-impl<'a, T> Iterator for Iter<'a, T> {
 
+impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -61,7 +58,6 @@ impl<'a, T> Iterator for Iter<'a, T> {
             &node.elem
         })
     }
-
 }
 
 // Recursive Destructor
@@ -69,7 +65,7 @@ impl<T> Drop for RefList<T> {
     fn drop(&mut self) {
         // Move current head into mutable variable;
         let mut head = self.head.take();
-        // loop over each node, if the node exists (can be unwrapped), 
+        // loop over each node, if the node exists (can be unwrapped),
         // take ownership of that node, and let the last one drop
         // otherwise, we're at the end of the list, and we should stop
         while let Some(node) = head {
@@ -82,7 +78,6 @@ impl<T> Drop for RefList<T> {
     }
 }
 
-
 #[cfg(test)]
 mod test {
 
@@ -90,7 +85,6 @@ mod test {
 
     #[test]
     fn basics() {
-
         let rl = RefList::new();
         assert_eq!(rl.head(), None);
 
@@ -105,7 +99,6 @@ mod test {
 
         let rl = rl.tail();
         assert_eq!(rl.head(), None);
-
     }
 
     #[test]
@@ -117,5 +110,4 @@ mod test {
         assert_eq!(iter.next(), Some(&2));
         assert_eq!(iter.next(), Some(&1));
     }
-
 }

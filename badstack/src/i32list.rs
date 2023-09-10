@@ -16,8 +16,6 @@ enum I32Link {
     More(Box<I32Node>),
 }
 
-
-
 // Implement List
 impl I32List {
     // Create A New, Empty List
