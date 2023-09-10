@@ -6,14 +6,14 @@ name: Post Push
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  FormatAndRequestPR:
+  FormatAndCreatePR:
     # permissions for the job
     permissions: write-all
     # The type of runner that the job will run on
@@ -35,4 +35,21 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           mode: commit
-
+      # Create PR On Main
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v5.0.2
+        with:
+            token: ${{secrets.GITHUB_TOKEN}}
+            branch: validcommit
+            branch-suffix: random
+            delete-branch: true
+            labels: |
+              report
+              automated pr
+            title: Automated PR From Development Branch
+            body: |
+              This PR Was Generated Because ${{github.actor}}
+              Pushed A Commit To The Development Branch Which Seemingly
+              Passed All Tests In The Current Workflow ${{github.workflow_ref}}.
+              Commit SHA: ${{github.sha}}
+              Commit Message: ${{github.event.head_commit.message}} ${{github.event.head_commit.timestamp}}
