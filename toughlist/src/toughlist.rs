@@ -18,6 +18,10 @@ struct Node<T> {
     next: Link<T>,
 }
 
+struct fake {
+    s: u32,
+}
+
 // Implement List
 impl<T> ToughList<T> {
     // Create A New, Empty List
