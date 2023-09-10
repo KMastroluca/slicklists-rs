@@ -1,5 +1,3 @@
-
-
 use std::mem;
 
 // NewType Wrapper Around ToughList For IntoIter Implementation
@@ -20,15 +18,11 @@ struct Node<T> {
     next: Link<T>,
 }
 
-
-
 // Implement List
 impl<T> ToughList<T> {
     // Create A New, Empty List
     pub fn new() -> Self {
-        ToughList {
-            head: None,
-        } // Return A List Pointing To An Empty link
+        ToughList { head: None } // Return A List Pointing To An Empty link
     }
 
     // Push A New Link Onto The Top Of The List Stack
@@ -55,25 +49,18 @@ impl<T> ToughList<T> {
         self.head.take()
     }
 
-
     pub fn peek(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| {
-            &node.elem
-        })
+        self.head.as_ref().map(|node| &node.elem)
     }
 
     pub fn peek_mut(&mut self) -> Option<&mut T> {
-        self.head.as_mut().map(|node| {
-            &mut node.elem
-        })
+        self.head.as_mut().map(|node| &mut node.elem)
     }
-
 
     // IntoIter Implement
     pub fn into_iter(self) -> IntoIter<T> {
         IntoIter(self)
     }
-
 }
 
 // Custom Drop Implementation
@@ -84,29 +71,22 @@ impl<T> Drop for ToughList<T> {
     }
 }
 
-
-
-
-
 // IntoIter Iterator Implementation
 impl<T> Iterator for IntoIter<T> {
-
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.0.pop()
     }
-
 }
-
-
-
 
 // Iter Implementation
 impl<T> ToughList<T> {
     pub fn iter(&self) -> Iter<'_, T> {
         // self.head.as_deref() ------------------v
-        Iter { next: self.head.as_ref().map::<&Node<T>, _>(|node| &node) }
+        Iter {
+            next: self.head.as_ref().map::<&Node<T>, _>(|node| &node),
+        }
     }
 }
 
@@ -122,8 +102,6 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
-
-
 #[cfg(test)]
 mod test {
 
@@ -131,7 +109,6 @@ mod test {
 
     #[test]
     fn test_toughlist() {
-
         let mut tl = ToughList::new();
 
         tl.push(1);
@@ -148,8 +125,7 @@ mod test {
         assert_eq!(tl.pop(), Some(4));
 
         assert_eq!(tl.pop(), Some(1));
-        assert_eq!(tl.pop(), None); 
-
+        assert_eq!(tl.pop(), None);
     }
 
     #[test]
@@ -157,7 +133,7 @@ mod test {
         let mut tl = ToughList::new();
         assert_eq!(tl.peek(), None);
         assert_eq!(tl.peek_mut(), None);
-        
+
         tl.push(1);
         tl.push(2);
         tl.push(3);
@@ -173,10 +149,8 @@ mod test {
         assert_eq!(tl.pop(), Some(100));
     }
 
-
     #[test]
     fn test_intoiter() {
-
         let mut tl = ToughList::new();
 
         tl.push(1);
@@ -204,5 +178,4 @@ mod test {
         assert_eq!(iter.next(), Some(&1));
         assert_eq!(iter.next(), None);
     }
-
 }
