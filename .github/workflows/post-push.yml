@@ -42,7 +42,7 @@ jobs:
           echo "Checked Out Branch"
       - name: Create New Branch
         run: |
-          gh pr checkout ${{env.REVIEWBRANCH}}
+          git checkout -b ${{env.REVIEWBRANCH}}
       - name: Check Success
         if: ${{ !success() }}
         run: |
