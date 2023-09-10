@@ -50,13 +50,29 @@ impl I32List {
 
         // Match The Value To Make Sure Theres Something To Pop Off The Stack
         // Mem::Replace This With I32Link::Empty
-        match mem::replace(&mut self.head, I32Link::Empty) {
+        match self.pop_node() {
             I32Link::Empty => None,
             I32Link::More(node) => {
                 self.head = node.next;
                 Some(node.elem)
             }
         }
+    }
+
+    // Private: Pop A Node Off The Stack For Use With Custom Drop Fn
+    fn pop_node(&mut self) -> I32Link {
+        mem::replace(&mut self.head, I32Link::Empty)
+    }
+
+}
+
+
+// Custom Drop Implementation 
+impl Drop for I32List {
+
+    fn drop(&mut self) {
+        // Iterate Thru Just Popping Off Every Element In The List
+        while let I32Link::More(_) = self.pop_node() {}
     }
 
 }
@@ -72,11 +88,9 @@ mod test {
     fn basics() {
 
         let mut list = I32List::new();
-        
 
         // Check List Empty
         assert_eq!(list.pop(), None);
-
 
         // Populate List
         list.push(1);
