@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: "${{github.token}}"
+      GH_TOKEN: ${{github.token}}
       BRANCHTOMERGE: main
       LABELS: automated-ci-review
       REVIEWBRANCH: review-${{github.triggering_actor}}-${{github.sha}}
@@ -64,7 +64,7 @@ jobs:
       - name: Create Pull Request Into Main For Review
         run: |
           echo "(*) Creating Pull Request"
-          gh pr create --base ${{env.BRANCHTOMERGE}} --head ${{env.REVIEWBRANCH}} --title ${{env.PRTITLE}} --body ${{env.PRBODY}} --label ${{env.LABELS}}
+          gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{env.PRBODY}}" --label "${{env.LABELS}}"
       
       - name: Check Success
         if: ${{ !success() }}
