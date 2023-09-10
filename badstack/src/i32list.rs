@@ -1,13 +1,10 @@
-
 use std::mem;
 
-
-// Allows Us To Keep I32Node and Link Private, While Allowing 
+// Allows Us To Keep I32Node and Link Private, While Allowing
 // Access To The Linked List
 pub struct I32List {
-    head: I32Link
+    head: I32Link,
 }
-
 
 struct I32Node {
     elem: i32,
@@ -16,24 +13,20 @@ struct I32Node {
 
 enum I32Link {
     Empty,
-    More(Box<I32Node>)
+    More(Box<I32Node>),
 }
-
-
 
 // Implement List
 impl I32List {
-
-
     // Create A New, Empty List
     pub fn new() -> Self {
-        I32List { head: I32Link::Empty } // Return A List Pointing To An Empty link
+        I32List {
+            head: I32Link::Empty,
+        } // Return A List Pointing To An Empty link
     }
-
 
     // Push A New Link Onto The Top Of The List Stack
     pub fn push(&mut self, elem: i32) {
-
         // Create New Node With New Element
         let new_node = Box::new(I32Node {
             elem: elem,
@@ -41,13 +34,10 @@ impl I32List {
         });
 
         self.head = I32Link::More(new_node); // Assign self.head to our new link
-
     }
-
 
     // Pop A Value Off The Top Of The List Stack
     pub fn pop(&mut self) -> Option<i32> {
-
         // Match The Value To Make Sure Theres Something To Pop Off The Stack
         // Mem::Replace This With I32Link::Empty
         match self.pop_node() {
@@ -58,6 +48,7 @@ impl I32List {
             }
         }
     }
+
 
     // Private: Pop A Node Off The Stack For Use With Custom Drop Fn
     fn pop_node(&mut self) -> I32Link {
@@ -75,9 +66,6 @@ impl Drop for I32List {
         while let I32Link::More(_) = self.pop_node() {}
     }
 
-}
-
-
 
 #[cfg(test)]
 mod test {
@@ -86,7 +74,6 @@ mod test {
 
     #[test]
     fn basics() {
-
         let mut list = I32List::new();
 
         // Check List Empty
@@ -112,8 +99,5 @@ mod test {
         // Check Exaustion
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
-
     }
-
-
 }
