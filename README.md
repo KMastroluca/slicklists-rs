@@ -16,9 +16,9 @@ Welcome to the **BadStack**, or the **I32List**. This is a simple linked list da
 
 The BadStack is a single-linked list storing `i32` values, with the following features:
 
-- A ```rust new()``` function to create an empty list[1].
-- A `rust push()` function to add elements to the list[1].
-- A `rust pop()` function to remove elements from the list[1].
+- A `new()` function to create an empty list[1].
+- A `push()` function to add elements to the list[1].
+- A `pop()` function to remove elements from the list[1].
 - A custom `Drop` implementation to clean up the list when it goes out of scope[1].
 
 ### Problems 😅
