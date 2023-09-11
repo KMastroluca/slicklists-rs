@@ -17,3 +17,7 @@ version = "0.0.0"
 [[package]]
 name = "toughlist"
 version = "0.0.0"
+
+[[package]]
+name = "unsafelist"
+version = "0.0.0"

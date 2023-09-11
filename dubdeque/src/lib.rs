@@ -1,1 +1,1 @@
-mod dubdeque;
+pub mod dubdeque;
