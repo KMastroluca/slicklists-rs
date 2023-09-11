@@ -5,5 +5,5 @@ members = [
     "badstack",
     "toughlist",
     "reflist",
-    "sloppydeque"
+    "dubdeque"
 ]
