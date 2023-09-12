@@ -27,7 +27,7 @@ jobs:
       REVIEWCOMMITMSG: (CI) Automated Review Branch Commit
       PRTITLE: (CI) - Automated Pull Request For Review ${{github.event.head_commit.author}} ${{github.sha}}
       PRBODY: |
-        ${{github.event.head_commit.author}} has pushed a commit to the dev branch, which has triggered
+        has pushed a commit to the dev branch, which has triggered
         an automated workflow that created a review branch, and submitted this automated PR for review.
         Message: ${{github.event.head_commit.message}}
 
@@ -73,7 +73,7 @@ jobs:
         id: pr
         run: |
           echo "(*) Creating Pull Request"
-          PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{env.PRBODY}}" )
+          PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{github.event.head_commit.author}} ${{env.PRBODY}}" )
           echo "::set-output name=number::$PR_URL"
 
       - name: Add Labels Based On Commit Message

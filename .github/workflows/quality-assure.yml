@@ -1,57 +1,74 @@
-name: QualityAssurance
-
+name: Cargo Test & Miri
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+    types: [opened, synchronize]
+
 
 jobs:
-    AssureCodeQuality:
+  CargoTest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-        env:
-            GH_TOKEN: ${{github.token}}
+      - name: Install Rust Development Enviornment With Miri
+        run: |
+          echo "(*) Downloading Rustup Install Script"
+          curl https://sh.rustup.rs -sSf -y | sh
+          rustup toolchain install nightly
+          rustup component add rust-src --toolchain nightly
+          rustup +nightly component add miri
 
-        runs-on: ubuntu-latest
-        
-        
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v2
+      - name: Run Cargo Unit Tests - Must Pass
+        id: cargo-test
+        run: |
+          echo "(*) Running Cargo Unit Tests"
+          cargo test > cargo-test.txt
+          echo "::set-output name=cargo::$(cat cargo-test.txt)"
+          rm -rf cargo-test.txt
+        continue-on-error: true
 
-            - name: Install Github CLI
-              run: |
-                sudo apt update
-                sudo apt install gh
+      - name: Run Miri Tests - Allow Failure
+        id: miri-test
+        run: |
+          echo "(*) Runing Miri Runtime Tests"
+          cargo miri test > miri-test.txt
+          echo "::set-output name=miri::$(cat miri-test.txt)"
+          rm -rf miri-test.txt
+        continue-on-error: true
 
-            - name: Download RustUp
-              run: |
-                curl https://sh.rustup.rs -sSf | sh -s -- -y
-                rustup toolchain install nightly --component miri
-                rustup override set nightly
-                rustup component add rustfmt
-                rustup component add clippy
-                cargo miri setup
+      - name: Check For Errors - Comment Findings In PR
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const core = require('@actions/core');
+            const cargoTestOutput = `${{ steps.cargo-test.outputs.output}}`;
+            const miriTestOutput = `${{ steps.miri-test.outputs.output }}`;
+            const cargoOutcome = `${{ steps.cargo-test.outcome }}`;
+            const miriOutcome = `${{ steps.miri-test.outcome }}`;
+            let body = `
+              [Project CI - Rust - Test Suite]\n
+              ---
+              Tests Run:\n
+              ---
+                @ Cargo Test - Unit Tests & Integration Tests =>  \`\`\`Rust
+                ${cargoOutcome}:
+                  ${cargoTestOutput}
+                \`\`\`
+              ---
+                @ Miri Test - Miri Runtime Testing =>  \`\`\`Rust
+                ${miriOutcome}:
+                  ${miriTestOutput}
+                \`\`\`            
+            `;
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.repo,
+              body: body
+            });
+            if (cargoOutcome == "failure") {
+                  core.setFailed(`(*) Cargo Tests Failed Which Is Not Allowed, Findings We're Reported In The PR.`);
+            }
 
-            - name: Format Code
-              run: |
-                echo "TODO: Format Code"
-
-            - name: Commit Formatted Code
-              run: |
-                echo "TODO: Implement Commit"
-
-            - name: Run Test Suite
-              run: |
-                echo "TODO: Run Test Suite"
-            
-            - name: "Leave PR Comment With Test Results"
-              run: |
-                echo "TODO: Leave Test Results"
-            
-            - name: "Add Labels If Needed"
-              run: |
-                echo "TODO: Add Labels"
-            
-            
+                  
