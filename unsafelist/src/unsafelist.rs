@@ -6,7 +6,7 @@ pub struct UnsafeList<T> {
     tail: *mut Node<T>
 }
 
-type Link<T> = Option<Box<Node<T>>>;
+type Link<T> = *mut Node<T>;
 
 struct Node<T> {
     elem:T,
@@ -17,51 +17,128 @@ struct Node<T> {
 impl<T> UnsafeList<T> {
 
     pub fn new() -> Self {
-        UnsafeList { head: None, tail: ptr::null_mut() }
+        UnsafeList { head: ptr::null_mut(), tail: ptr::null_mut() }
     }
 
     pub fn push(&mut self, elem:T) {
+        unsafe {
+            let new_tail = Box::into_raw(Box::new(Node {
+                elem,
+                next: ptr::null_mut(),
+            }));
 
-        let mut new_tail = Box::new(Node {
-            elem:elem,
-            next:None
-        });
-
-        // Corece a mutable reference to a raw pointer
-        let raw_tail: *mut _ =  &mut *new_tail;
-
-        // Check for a null pointer
-        if !self.tail.is_null() {
-            // if the old tail exists, update it to point to the new tail
-            unsafe { // Telling the compiler that we arent wearing any condoms before we put it in
-                (*self.tail).next = Some(new_tail);
+            if !self.tail.is_null() {
+                (*self.tail).next = new_tail;
+            } else {
+                self.head = new_tail;
             }
-        } else {
-            // otherwise, update the head to point to it
-            self.head = Some(new_tail);
-        }
 
-        self.tail = raw_tail;
+            self.tail = new_tail;
+        }
     }
 
 
     pub fn pop(&mut self) -> Option<T> {
-        self.head.take().map(|head| {
+        unsafe {    
+            if self.head.is_null() {
+                None
+            } else {
+                let head = Box::from_raw(self.head);
+                self.head = head.next;
 
-            let head = *head; // Dereference Head
-            self.head = head.next;
+                if self.head.is_null() {
+                    self.tail = ptr::null_mut();
+                }
 
-            if self.head.is_none() {
-                self.tail = ptr::null_mut();
+                Some(head.elem)
             }
-
-            head.elem
-
-        } )
+        }
     }
 
 
+    pub fn peek(&self) -> Option<&T> {
+        unsafe {
+            self.head.as_ref().map(|node| &node.elem)
+        }
+    }
+
+    pub fn peek_mut(&mut self) -> Option<&mut T> {
+        unsafe {
+            self.head.as_mut().map(|node| &mut node.elem)
+        }
+    }
+
 }
+
+impl<T> Drop for UnsafeList<T> {
+    fn drop(&mut self) {
+        while let Some(_) = self.pop() {}
+    }
+}
+
+
+pub struct IntoIter<T>(UnsafeList<T>);
+
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
+}
+
+pub struct IterMut<'a, T> {
+    next: Option<&'a mut Node<T>>,
+}
+
+impl<T> UnsafeList<T> {
+    pub fn into_iter(self) -> IntoIter<T> {
+        IntoIter(self)
+    }
+
+    pub fn iter(&self) -> Iter<'_, T> {
+        unsafe {
+            Iter { next:self.head.as_ref()}
+        }
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<'_, T> {
+        unsafe {
+            IterMut { next: self.head.as_mut()}
+        }
+    }
+}
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        unsafe {
+            self.next.map(|node| {
+                self.next = node.next.as_ref();
+                &node.elem
+            })
+        }
+    }
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        unsafe {
+            self.next.take().map(|node| {
+                self.next = node.next.as_mut();
+                &mut node.elem
+            })
+        }
+    }
+}
+
+
 
 
 #[cfg(test)]
@@ -105,6 +182,44 @@ mod test {
         assert_eq!(list.pop(), Some(7));
         assert_eq!(list.pop(), None);
 
+    }
+
+
+    #[test]
+    fn crazy_shit() {
+        let mut list = UnsafeList::new();
+
+        list.push(1);
+        list.push(2);
+        list.push(3);
+
+        assert!(list.pop() == Some(1));
+        list.push(4);
+        assert!(list.pop() == Some(2));
+        list.push(5);
+
+        assert!(list.peek() == Some(&3));
+
+        list.push(6);
+        list.peek_mut().map(|x| *x *= 10);
+        assert!(list.peek() == Some(&30));
+        assert!(list.pop() == Some(30));
+
+        for elem in list.iter_mut() {
+            *elem *= 100;
+        }
+
+        let mut iter = list.iter();
+        assert_eq!(iter.next(), Some(&400));
+        assert_eq!(iter.next(), Some(&500));
+        assert_eq!(iter.next(), Some(&600));
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next(), None);
+
+        assert!(list.pop() == Some(400));
+        list.peek_mut().map(|x| *x *= 10);
+        assert!(list.peek() == Some(&5000));
+        list.push(7);
     }
 
 }

@@ -6,5 +6,6 @@ members = [
     "toughlist",
     "reflist",
     "dubdeque",
-    "unsafelist"
+    "unsafelist",
+    "ptrplayground"
 ]
