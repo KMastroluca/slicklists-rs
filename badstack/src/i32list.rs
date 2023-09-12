@@ -30,7 +30,7 @@ impl I32List {
     pub fn push(&mut self, elem: i32) {
         // Create New Node With New Element
         let new_node = Box::new(I32Node {
-            elem: elem,
+            elem,
             next: mem::replace(&mut self.head, I32Link::Empty), // Grab self.head, while replacing it with I32Link::Empty
         });
 
