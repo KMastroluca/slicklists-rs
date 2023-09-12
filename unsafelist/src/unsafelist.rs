@@ -3,37 +3,35 @@ use std::ptr;
 
 pub struct UnsafeList<T> {
     head: Link<T>,
-    tail: *mut Node<T>
+    tail: *mut Node<T>,
 }
 
 type Link<T> = Option<Box<Node<T>>>;
 
 struct Node<T> {
-    elem:T,
-    next: Link<T>
+    elem: T,
+    next: Link<T>,
 }
 
-
 impl<T> UnsafeList<T> {
-
     pub fn new() -> Self {
-        UnsafeList { head: None, tail: ptr::null_mut() }
+        UnsafeList {
+            head: None,
+            tail: ptr::null_mut(),
+        }
     }
 
-    pub fn push(&mut self, elem:T) {
-
-        let mut new_tail = Box::new(Node {
-            elem,
-            next:None
-        });
+    pub fn push(&mut self, elem: T) {
+        let mut new_tail = Box::new(Node { elem, next: None });
 
         // Corece a mutable reference to a raw pointer
-        let raw_tail: *mut _ =  &mut *new_tail;
+        let raw_tail: *mut _ = &mut *new_tail;
 
         // Check for a null pointer
         if !self.tail.is_null() {
             // if the old tail exists, update it to point to the new tail
-            unsafe { // Telling the compiler that we arent wearing any condoms before we put it in
+            unsafe {
+                // Telling the compiler that we arent wearing any condoms before we put it in
                 (*self.tail).next = Some(new_tail);
             }
         } else {
@@ -44,10 +42,8 @@ impl<T> UnsafeList<T> {
         self.tail = raw_tail;
     }
 
-
     pub fn pop(&mut self) -> Option<T> {
         self.head.take().map(|head| {
-
             let head = *head; // Dereference Head
             self.head = head.next;
 
@@ -56,13 +52,9 @@ impl<T> UnsafeList<T> {
             }
 
             head.elem
-
-        } )
+        })
     }
-
-
 }
-
 
 #[cfg(test)]
 mod test {
@@ -71,7 +63,6 @@ mod test {
 
     #[test]
     fn basics() {
-
         let mut list = UnsafeList::new();
 
         // Test Empty List Behaves Correctly
@@ -95,16 +86,12 @@ mod test {
         assert_eq!(list.pop(), Some(5));
         assert_eq!(list.pop(), None);
 
-
         // Check That We Can Bounce Back From Nothing
         list.push(6);
         list.push(7);
 
-
         assert_eq!(list.pop(), Some(6));
         assert_eq!(list.pop(), Some(7));
         assert_eq!(list.pop(), None);
-
     }
-
 }
