@@ -10,23 +10,23 @@ Remember, this project is a testament to my learning experience, and as such, it
 
 ## The BadStack (a.k.a. I32List) 📚🔗
 
-Welcome to the **BadStack**, or the **I32List**. This is a simple linked list data structure in Rust, serving as a learning experience and a display of my programming abilities. However, it's far from perfect and not intended for practical use.
+This is a simple linked list data structure in Rust, serving as a learning experience and a display of my programming abilities. However, it's far from perfect and not intended for practical use.
 
-### Features 🌟
+### Features? 🌟
 
 The BadStack is a single-linked list storing `i32` values, with the following features:
 
-- A `new()` function to create an empty list[1].
-- A `push()` function to add elements to the list[1].
-- A `pop()` function to remove elements from the list[1].
-- A custom `Drop` implementation to clean up the list when it goes out of scope[1].
+- A `new()` function to create an empty list.
+- A `push()` function to add elements to the list.
+- A `pop()` function to remove elements from the list.
+- A custom `Drop` implementation to clean up the list when it goes out of scope.
 
-### Problems 😅
+### Problems! 😅
 
 The BadStack has its share of issues:
 
-1. The `I32Link` enum has two variants: `Empty` and `More(Box<I32Node>)`, leading to allocating a node that just says "I'm not actually a Node"[3].
-2. The implementation is inefficient and impractical, as it uses `Box` for heap allocation[5].
+1. The `I32Link` enum has two variants: `Empty` and `More(Box<I32Node>)`, leading to allocating a node that just says "I'm not actually a Node. In other words, its just a bad implementation of Option. Which i use in later lists.
+2. The implementation is inefficient and impractical, as it uses `Box` for heap allocation.
 3. The BadStack lacks iterators, making it difficult to traverse the list.
 
 This data structure is just one of several in this series, and it's important to note that it's not meant for actual use. It's a learning experience and a testament to my journey as a programmer.

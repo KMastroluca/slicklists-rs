@@ -1,7 +1,8 @@
 {
     "rust-analyzer.linkedProjects": [
         ".\\badstack\\Cargo.toml",
-        ".\\toughlist\\Cargo.toml"
+        ".\\toughlist\\Cargo.toml",
+        ".\\ptrplayground\\Cargo.toml"
     ],
     "editor.tabCompletion": "on",
     "diffEditor.codeLens": true,
