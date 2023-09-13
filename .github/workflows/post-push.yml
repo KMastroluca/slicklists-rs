@@ -81,7 +81,7 @@ jobs:
       - name: Add Labels Based On Commit Message
         run: |
           echo "(*) Labeling Pull Request"
-          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "automated pr"
+          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "automated pr" --token ${{secrets.GITHUB_TOKEN}}
           echo "(*) Parsing Commit Message For Labels"
           if [[ "${{github.event.head_commit.message}}" == *"feat"* ]]; then
             gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "feature"
