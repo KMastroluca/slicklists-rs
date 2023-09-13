@@ -108,10 +108,5 @@ jobs:
           gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "CI/CD"
           fi                   
 
-      - name: Check Success
-        if: ${{ !success() }}
-        run: |
-          echo "(-) Failed To Create Pull Request For Review"
 
-          
 
