@@ -7,5 +7,6 @@ members = [
     "reflist",
     "dubdeque",
     "unsafelist",
-    "ptrplayground"
+    "ptrplayground",
+    "gangsterlist"
 ]

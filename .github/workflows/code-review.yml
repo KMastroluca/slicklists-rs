@@ -1,0 +1,86 @@
+name: Code Review
+
+on:
+  pull_request:
+    branches:
+      - 'review*'
+      - 'main'
+    types: [opened, synchronize]
+  push:
+    branches:
+      - 'review*'
+
+jobs:
+  checkout-and-setup-rust-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Archive Code
+        uses: actions/upload-artifact@v3
+        with:
+          name: code
+          path: .
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          components: rustfmt, clippy, miri
+      - name: Cache Rust Toolchain
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target/
+            ~/.rustup
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock')}}
+
+  style-and-formatting:
+    needs: checkout-and-setup-rust-tools
+    runs-on: ubuntu-latest
+    steps:
+      - name: Grab Stashed Code
+        uses: actions/download-artifact@v3
+        with:
+          name: code
+
+      - name: Grab Cached Rust Toolkit
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target/
+            ~/.rustup
+          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
+
+      - name: Check & Run RustFmt
+        uses: actions/github-script@v6
+        id: check-run-fmt
+        with:
+            result-encoding: string
+            script: |
+              let checkOutput = '';
+              let errorOutput = '';
+              let formatOutput = '';
+
+              const options = {};
+              options.listeners = {
+                stdout:(data:Buffer) => {
+                  myOutput += data.toString();
+                },
+                stderr: (data: Buffer) => {
+                  errorOutput += data.toString();
+                }
+              };
+
+              await exec.exec('cargo', ['fmt', '--', '--check'], options);
+        
+      - name: Print Formatting Result (Write Comment To PR) DEBUG
+        run: |
+                echo "(*) Printing Result Of Format Checking: ${{steps.check-run-fmt.outputs.result}}"
