@@ -107,6 +107,8 @@ jobs:
           if [[ "${{github.event.head_commit.message}}" == *"CI"* ]]; then
           gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "CI/CD"
           fi                   
-
+          if [[ "${{github.event.head_commit.message}}" == *"security"* ]]; then
+          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "security"
+          fi                 
 
 
