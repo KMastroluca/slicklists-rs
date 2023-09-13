@@ -1,6 +1,9 @@
 name: Code Review
 
 on:
+  workflow_dispatch:
+  pull_request_target:
+    branches: [main]
   pull_request:
     branches:
       - 'review*'
@@ -11,76 +14,51 @@ on:
       - 'review*'
 
 jobs:
-  checkout-and-setup-rust-tools:
+  run-code-review:
     runs-on: ubuntu-latest
+    env:
+      FMT_CHECK_RESULT: fmt_check.txt
+      FMT_CODE_RESULT: fmt_code.txt
+      UNIT_TEST_RESULT: unit_test.txt
+      MIRI_TEST_RESULT: miri_test.txt
+      SEC_AUDIT_RESULT: sec_result.txt
+      CLIPPY_RESULT: clippy_result.txt
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Archive Code
-        uses: actions/upload-artifact@v3
+        uses: actions/checkout@v4
         with:
-          name: code
-          path: .
-      - name: Install Rust Toolchain
+          token: ${{secrets.GITHUB_TOKEN}}
+      
+
+      - name: Install Toolchain (Rust Nightly)
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          profile: minimal,
+          toolchain: nightly,
           components: rustfmt, clippy, miri
-      - name: Cache Rust Toolchain
-        uses: actions/cache@v2
+
+      - name: Check Formatting
+        id: check-formatting
+        uses: actions-rs/cargo@v1
         with:
-          path: |
-            ~/.cargo/bin
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
-            target/
-            ~/.rustup
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock')}}
+          command: fmt
+          args: -- --check
+        continue-on-error: true
 
-  style-and-formatting:
-    needs: checkout-and-setup-rust-tools
-    runs-on: ubuntu-latest
-    steps:
-      - name: Grab Stashed Code
-        uses: actions/download-artifact@v3
-        with:
-          name: code
-
-      - name: Grab Cached Rust Toolkit
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            ~/.cargo/bin
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
-            target/
-            ~/.rustup
-          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
-
-      - name: Check & Run RustFmt
-        uses: actions/github-script@v6
-        id: check-run-fmt
-        with:
-            result-encoding: string
-            script: |
-              let checkOutput = '';
-              let errorOutput = '';
-              let formatOutput = '';
-
-              const options = {};
-              options.listeners = {
-                stdout:(data:Buffer) => {
-                  myOutput += data.toString();
-                },
-                stderr: (data: Buffer) => {
-                  errorOutput += data.toString();
-                }
-              };
-
-              await exec.exec('cargo', ['fmt', '--', '--check'], options);
-        
-      - name: Print Formatting Result (Write Comment To PR) DEBUG
+      - name: Cache Format Check For Later
         run: |
-                echo "(*) Printing Result Of Format Checking: ${{steps.check-run-fmt.outputs.result}}"
+          echo "(*) Caching Format Check Output"
+          echo "Format Check: ${{steps.check-formatting.outcome}}, Results: ${{steps.check-formatting.outputs}}" >> ${{env.FMT_CHECK_RESULT}}
+
+      - name: If Check Fails, Then Format Code
+        id: format-code
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+        if: failure() #only run this if check failed.
+        
+      - name: Cache Format Code For Later
+        run: |
+          echo "(*) Caching Format Code"
+          echo "Format Code: ${{steps.format-code.outcome}}, Results: ${{steps.format-code.outputs}}" >> ${{env.FMT_CODE_RESULT}}
