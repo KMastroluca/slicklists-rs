@@ -1,5 +1,9 @@
 # Slicklist-rs: A Collection of Learning Experiences 🎓🦀
 
+[![Security Audit](https://github.com/KMastroluca/slicklists-rs/actions/workflows/security-audit.yml/badge.svg?branch=main)](https://github.com/KMastroluca/slicklists-rs/actions/workflows/security-audit.yml)
+
+[![Code Review](https://github.com/KMastroluca/slicklists-rs/actions/workflows/code-review.yml/badge.svg?branch=main)](https://github.com/KMastroluca/slicklists-rs/actions/workflows/code-review.yml)
+
 Welcome to **Slicklist-rs**, a repository showcasing my journey through the world of Rust and data structures. This project is primarily a CV piece, demonstrating my abilities as a programmer. However, it is important to note that the data structures presented here are not intended for practical use.
 
 Feel free to explore the various linked lists and other data structures I've created, such as the **BadStack** (a.k.a. **I32List**). While I doubt you'll find these creations particularly useful, if you do happen to stumble upon something of interest, I encourage you to fork this repository and use the code however you see fit.

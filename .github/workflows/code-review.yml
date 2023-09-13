@@ -34,10 +34,10 @@ jobs:
       - name: Install Toolchain (Rust Nightly)
         uses: actions-rs/toolchain@v1
         with:
-          profile: minimal,
-          toolchain: nightly,
+          profile: minimal
+          toolchain: nightly
           components: rustfmt, clippy, miri
-
+          
       - name: Check Formatting
         id: check-formatting
         uses: actions-rs/cargo@v1
