@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: ${{github.token}}
+      GH_TOKEN: ${{secrets.Code-Review-Workflow}}
       BRANCHTOMERGE: main
       LABELS: automated pr
       REVIEWBRANCH: review-${{github.triggering_actor}}-${{github.sha}}
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout Commit
         uses: actions/checkout@v4
         with:
-            token: ${{secrets.GITHUB_TOKEN}}
+            token: ${{secrets.Code-Review-Workflow}}
       - run: |
           echo "Checked Out Branch"
 
@@ -73,7 +73,7 @@ jobs:
         id: pr
         run: |
           echo "(*) Creating Pull Request"
-          PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{github.event.head_commit.author}} ${{env.PRBODY}}" )
+          PR_URL=$(gh pr create --base "${{env.BRANCHTOMERGE}}" --head "${{env.REVIEWBRANCH}}" --title "${{env.PRTITLE}}" --body "${{github.actor}} ${{env.PRBODY}}" )
           echo "::set-output name=number::$PR_URL"
 
       - name: Add Labels Based On Commit Message
@@ -81,19 +81,26 @@ jobs:
           echo "(*) Labeling Pull Request"
           gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "automated pr"
           echo "(*) Parsing Commit Message For Labels"
-          if [[ "${{github.event.head_commit.message}}" == "feat:"* ]]; then
+          if [[ "${{github.event.head_commit.message}}" == *"feat"* ]]; then
             gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "feature"
           fi
-          if [[ "${{github.event.head_commit.message}}" == "fix:"* ]]; then
+          if [[ "${{github.event.head_commit.message}}" == *"fix"* ]]; then
             gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "fix"
           fi
-          if [[ "${{github.event.head_commit.message}}" == "build:"* ]]; then
+          if [[ "${{github.event.head_commit.message}}" == *"build"* ]]; then
             gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "build"
           fi
-          if [[ "${{github.event.head_commit.message}}" == "chore:"* ]]; then
+          if [[ "${{github.event.head_commit.message}}" == *"chore"* ]]; then
             gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "chore"
           fi
+          if [[ "${{github.event.head_commit.message}}" == *"extra-feature"* ]]; then
+          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "extra feature"
+          fi
+          if [[ "${{github.event.head_commit.message}}" == *"bug"* ]]; then
+          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "bug"
+          fi
           
+
       - name: Check Success
         if: ${{ !success() }}
         run: |
