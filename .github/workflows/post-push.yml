@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: ${{secrets.Code-Review-Workflow}}
+      GH_TOKEN: ${{secrets.Code_Review_Workflow}}
       BRANCHTOMERGE: main
       LABELS: automated pr
       REVIEWBRANCH: review-${{github.triggering_actor}}-${{github.sha}}
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout Commit
         uses: actions/checkout@v4
         with:
-            token: ${{secrets.Code-Review-Workflow}}
+            token: ${{secrets.Code_Review_Workflow}}
       - run: |
           echo "Checked Out Branch"
 
@@ -99,7 +99,12 @@ jobs:
           if [[ "${{github.event.head_commit.message}}" == *"bug"* ]]; then
           gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "bug"
           fi
-          
+          if [[ "${{github.event.head_commit.message}}" == *"ci"* ]]; then
+          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "CI/CD"
+          fi          
+          if [[ "${{github.event.head_commit.message}}" == *"CI"* ]]; then
+          gh pr edit "${{steps.pr.outputs.PR_URL}}" --add-label "CI/CD"
+          fi                   
 
       - name: Check Success
         if: ${{ !success() }}
