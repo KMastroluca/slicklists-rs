@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GH_TOKEN: ${{secrets.CODE_REVIEW}}
       BRANCHTOMERGE: main
       LABELS: automated pr
       REVIEWBRANCH: review-${{github.triggering_actor}}-${{github.sha}}
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout Commit
         uses: actions/checkout@v4
         with:
-            token: ${{secrets.GITHUB_TOKEN}}
+            token: ${{secrets.CODE_REVIEW}}
       - run: |
           echo "Checked Out Branch"
 
