@@ -229,7 +229,8 @@ impl<T> GList<T> {
 // Jesus Christ
 impl<T> Default for GList<T> {
     fn default() -> Self {
-        Self::new()
+        let list = Self::new();
+        list
     }
 }
 
