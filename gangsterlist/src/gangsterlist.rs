@@ -220,7 +220,7 @@ impl<T> GList<T> {
     // Literally Just Drop.
     // Which kinda means, we can make drop just call clear()
     pub fn clear(&mut self) {
-        while let Some(_) = self.pop_front() {}
+        while self.pop_front().is_some() {}
     }
 
 }
@@ -618,5 +618,115 @@ mod test {
         assert_eq!(it.size_hint(), (0, Some(0)));
         assert!(it.next().is_none());
     }
+
+    #[test]
+    fn text_iterator_mut_double_end() {
+        let mut n = GList::new();
+        assert!(n.iter_mut().next_back().is_none());
+        n.push_front(4);
+        n.push_front(5);
+        n.push_front(6);
+        let mut it = n.iter_mut();
+        assert_eq!(it.size_hint(), (3, Some(3)));
+        assert_eq!(*it.next().unwrap(), 6);
+        assert_eq!(it.size_hint(), (2, Some(2)));
+        assert_eq!(*it.next_back().unwrap(), 4);
+        assert_eq!(it.size_hint(), (1, Some(1)));
+        assert_eq!(*it.next_back().unwrap(), 5);
+        assert!(it.next_back().is_none());
+        assert!(it.next().is_none());
+    }
+
+
+    #[test]
+    fn test_eq() {
+        let mut n: GList<u8> = list_from(&[]);
+        let mut m = list_from(&[]);
+        assert!(n == m);
+        n.push_front(1);
+        assert!(n != m);
+        m.push_back(1);
+        assert!(n == m);
+
+        let n = list_from(&[2, 3, 4]);
+        let m = list_from(&[1, 2, 3]);
+        assert!(n != m);
+    }
+
+    #[test]
+    fn test_ord() {
+        let n = list_from(&[]);
+        let m = list_from(&[1, 2, 3]);
+        assert!(n < m);
+        assert!(m > n);
+        assert!(n <= n);
+        assert!(n >= n);
+    }
+
+    #[test]
+    fn test_ord_nan() {
+        let nan = 0.0f64 / 0.0;
+        let n = list_from(&[nan]);
+        let m = list_from(&[nan]);
+        assert!(!(n < m));
+        assert!(!(n > m));
+        assert!(!(n <= m));
+        assert!(!(n >= m));
+
+        let n = list_from(&[nan]);
+        let one = list_from(&[1.0f64]);
+        assert!(!(n < one));
+        assert!(!(n > one));
+        assert!(!(n <= one));
+        assert!(!(n >= one));
+
+        let u = list_from(&[1.0f64, 2.0, nan]);
+        let v = list_from(&[1.0f64, 2.0, 3.0]);
+        assert!(!(u < v));
+        assert!(!(u > v));
+        assert!(!(u <= v));
+        assert!(!(u >= v));
+
+        let s = list_from(&[1.0f64, 2.0, 4.0, 2.0]);
+        let t = list_from(&[1.0f64, 2.0, 3.0, 2.0]);
+        assert!(!(s < t));
+        assert!(s > one);
+        assert!(!(s <= one));
+        assert!(s >= one);
+    }
+
+    #[test]
+    fn test_debug() {
+        let list: GList<i32> = (0..10).collect();
+        assert_eq!(format!("{:?}", list), "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
+
+        let list: GList<&str> = vec!["just", "one", "test", "more"]
+            .iter().copied()
+            .collect();
+        assert_eq!(format!("{:?}", list), r#"["just", "one", "test", "more"]"#);
+    }
+
+    #[test]
+    fn test_hashmap() {
+        // Check that HashMap works with this as a key
+
+        let list1: GList<i32> = (0..10).collect();
+        let list2: GList<i32> = (1..11).collect();
+        let mut map = std::collections::HashMap::new();
+
+        assert_eq!(map.insert(list1.clone(), "list1"), None);
+        assert_eq!(map.insert(list2.clone(), "list2"), None);
+
+        assert_eq!(map.len(), 2);
+
+        assert_eq!(map.get(&list1), Some(&"list1"));
+        assert_eq!(map.get(&list2), Some(&"list2"));
+
+        assert_eq!(map.remove(&list1), Some("list1"));
+        assert_eq!(map.remove(&list2), Some("list2"));
+
+        assert!(map.is_empty());
+    }
+
 
 }
