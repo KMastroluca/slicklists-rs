@@ -1,14 +1,12 @@
-
 use std::cmp::Ordering;
-use std::hash::Hasher;
 use std::hash::Hash;
+use std::hash::Hasher;
 // Actually Wizard Magic!
-use std::ptr::NonNull;
 use std::fmt;
 use std::fmt::Debug;
+use std::ptr::NonNull;
 // Also Wizardry
 use std::marker::PhantomData;
-
 
 pub struct GList<T> {
     front: Link<T>,
@@ -25,14 +23,12 @@ pub struct Iter<'a, T> {
     _boo: PhantomData<&'a T>,
 }
 
-
 pub struct IterMut<'a, T> {
     front: Link<T>,
     back: Link<T>,
     len: usize,
     _boo: PhantomData<&'a mut T>,
 }
-
 
 pub struct IntoIter<T> {
     list: GList<T>,
@@ -46,9 +42,7 @@ struct Node<T> {
     elem: T,
 }
 
-
 impl<T> GList<T> {
-    
     pub fn new() -> Self {
         Self {
             front: None,
@@ -62,12 +56,8 @@ impl<T> GList<T> {
         self.len
     }
 
-
-
     pub fn push_front(&mut self, elem: T) {
-
         unsafe {
-
             let new = NonNull::new_unchecked(Box::into_raw(Box::new(Node {
                 front: None,
                 back: None,
@@ -84,18 +74,15 @@ impl<T> GList<T> {
 
             self.front = Some(new);
             self.len += 1;
-
         }
-
     }
 
     pub fn push_back(&mut self, elem: T) {
         unsafe {
-
             let new = NonNull::new_unchecked(Box::into_raw(Box::new(Node {
                 front: None,
                 back: None,
-                elem
+                elem,
             })));
 
             if let Some(old) = self.back {
@@ -112,16 +99,14 @@ impl<T> GList<T> {
     }
 
     pub fn pop_front(&mut self) -> Option<T> {
-
         unsafe {
-
             // Only do work if we even have a front node to pop
             self.front.map(|node| {
                 // grab the boxed node so we can unbox the fuck out of it
                 let box_node = Box::from_raw(node.as_ptr());
                 let result = box_node.elem;
 
-                // Make the next node into the new front 
+                // Make the next node into the new front
                 self.front = box_node.back;
 
                 if let Some(new) = self.front {
@@ -135,11 +120,7 @@ impl<T> GList<T> {
                 result
                 // Box is implicitly freed here
             })
-
-
         }
-
-
     }
 
     pub fn pop_back(&mut self) -> Option<T> {
@@ -166,28 +147,19 @@ impl<T> GList<T> {
     }
 
     pub fn front(&self) -> Option<&T> {
-        unsafe {
-            self.front.map(|node| &(*node.as_ptr()).elem )
-        }
+        unsafe { self.front.map(|node| &(*node.as_ptr()).elem) }
     }
 
     pub fn front_mut(&mut self) -> Option<&mut T> {
-        unsafe {
-            self.front.map(|node| &mut (*node.as_ptr()).elem )
-        }
+        unsafe { self.front.map(|node| &mut (*node.as_ptr()).elem) }
     }
 
-
     pub fn back(&self) -> Option<&T> {
-        unsafe {
-            self.back.map(|node| &(*node.as_ptr()).elem )
-        }
+        unsafe { self.back.map(|node| &(*node.as_ptr()).elem) }
     }
 
     pub fn back_mut(&mut self) -> Option<&mut T> {
-        unsafe {
-            self.back.map(|node| &mut (*node.as_ptr()).elem )
-        }
+        unsafe { self.back.map(|node| &mut (*node.as_ptr()).elem) }
     }
 
     pub fn iter(&self) -> Iter<T> {
@@ -212,7 +184,6 @@ impl<T> GList<T> {
         IntoIter { list: self }
     }
 
-
     // Helper Functions
     pub fn is_empty(&self) -> bool {
         self.len == 0
@@ -222,9 +193,7 @@ impl<T> GList<T> {
     pub fn clear(&mut self) {
         while self.pop_front().is_some() {}
     }
-
 }
-
 
 // Jesus Christ
 impl<T> Default for GList<T> {
@@ -251,7 +220,7 @@ impl<T: Clone> Clone for GList<T> {
 
 impl<T> Extend<T> for GList<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
-        for item in iter{
+        for item in iter {
             self.push_back(item);
         }
     }
@@ -346,7 +315,6 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 }
 
 impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
-
     fn next_back(&mut self) -> Option<Self::Item> {
         if self.len > 0 {
             self.back.map(|node| unsafe {
@@ -361,11 +329,9 @@ impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
 }
 
 impl<'a, T> ExactSizeIterator for IterMut<'a, T> {
-
     fn len(&self) -> usize {
         self.len
     }
-
 }
 
 impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
@@ -387,7 +353,6 @@ impl<'a, T> ExactSizeIterator for Iter<'a, T> {
         self.len
     }
 }
-
 
 impl<T> IntoIterator for GList<T> {
     type IntoIter = IntoIter<T>;
@@ -429,11 +394,9 @@ impl<T> FromIterator<T> for GList<T> {
     }
 }
 
-
 // Implement Drop
 impl<T> Drop for GList<T> {
-
-    /* In case i fuck this up and im totally wrong 
+    /* In case i fuck this up and im totally wrong
     fn drop(&mut self) {
         // Pop Till We Die
         while let Some(_) = self.pop_front() {}
@@ -443,18 +406,12 @@ impl<T> Drop for GList<T> {
     fn drop(&mut self) {
         self.clear();
     }
-
 }
-
-
-
 
 #[cfg(test)]
 mod test {
 
     use super::GList;
-
-
 
     fn generate_test() -> GList<i32> {
         list_from(&[0, 1, 2, 3, 4, 5, 6])
@@ -463,7 +420,6 @@ mod test {
     fn list_from<T: Clone>(v: &[T]) -> GList<T> {
         v.iter().map(|x| (*x).clone()).collect()
     }
-
 
     #[test]
     fn test_basic_front() {
@@ -503,9 +459,7 @@ mod test {
         assert_eq!(list.len(), 0);
         assert_eq!(list.pop_front(), None);
         assert_eq!(list.len(), 0);
-
     }
-
 
     #[test]
     fn test_basic() {
@@ -548,11 +502,8 @@ mod test {
         assert_eq!(n.pop_front(), Some(1));
     }
 
-
-
     #[test]
     fn test_iterator() {
-
         let m = generate_test();
         for (i, elt) in m.iter().enumerate() {
             assert_eq!(i as i32, *elt);
@@ -602,7 +553,6 @@ mod test {
         assert_eq!(it.next(), None);
     }
 
-
     #[test]
     fn text_mut_iter() {
         let mut m = generate_test();
@@ -642,7 +592,6 @@ mod test {
         assert!(it.next_back().is_none());
         assert!(it.next().is_none());
     }
-
 
     #[test]
     fn test_eq() {
@@ -707,7 +656,8 @@ mod test {
         assert_eq!(format!("{:?}", list), "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
 
         let list: GList<&str> = vec!["just", "one", "test", "more"]
-            .iter().copied()
+            .iter()
+            .copied()
             .collect();
         assert_eq!(format!("{:?}", list), r#"["just", "one", "test", "more"]"#);
     }
@@ -733,6 +683,4 @@ mod test {
 
         assert!(map.is_empty());
     }
-
-
 }
