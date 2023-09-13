@@ -19,10 +19,10 @@ jobs:
     env:
       FMT_CHECK_RESULT: fmt_check.txt
       FMT_CODE_RESULT: fmt_code.txt
-      UNIT_TEST_RESULT: unit_test.txt
-      MIRI_TEST_RESULT: miri_test.txt
-      SEC_AUDIT_RESULT: sec_result.txt
-      CLIPPY_RESULT: clippy_result.txt
+      UNIT_TEST_RESULT: unit.txt
+      MIRI_TEST_RESULT: miri.txt
+      SEC_AUDIT_RESULT: sec.txt
+      CLIPPY_RESULT: clippy.txt
 
     steps:
       - name: Checkout Code
@@ -37,7 +37,7 @@ jobs:
           profile: minimal
           toolchain: nightly
           components: rustfmt, clippy, miri
-          
+
       - name: Check Formatting
         id: check-formatting
         uses: actions-rs/cargo@v1
