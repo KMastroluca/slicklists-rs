@@ -229,7 +229,12 @@ impl<T> GList<T> {
 // Jesus Christ
 impl<T> Default for GList<T> {
     fn default() -> Self {
-        let list = Self::new();
+        let list = Self {
+            front: None,
+            back: None,
+            len: 0,
+            _boo: PhantomData,
+        };
         list
     }
 }

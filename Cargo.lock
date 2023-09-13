@@ -11,6 +11,10 @@ name = "dubdeque"
 version = "0.0.0"
 
 [[package]]
+name = "gangsterlist"
+version = "0.0.0"
+
+[[package]]
 name = "ptrplayground"
 version = "0.0.0"
 
