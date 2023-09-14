@@ -1,21 +1,15 @@
-name: Code Review
+name: Style & Formatting
 
 on:
   workflow_dispatch:
-  pull_request_target:
-    branches: [main]
   pull_request:
-    branches:
-      - 'review*'
-      - 'main'
-    types: [opened, synchronize]
-  push:
-    branches:
-      - 'review*'
+    branches: [main]
+  
 
 jobs:
-  run-code-review:
+  style-and-formatting:
     runs-on: ubuntu-latest
+    permissions: write-all
     env:
       FMT_COMMIT_MSG: (CI) - Formatted Code - RustFmt - ${{github.action}} - ${{github.sha}}
       AFTER_TEST_COMMIT_MSG: (CI) - After Test Cleanup
@@ -51,14 +45,20 @@ jobs:
       - name: If Check Fails, Then Format Code
         id: format-code
         run: |
-          echo "(*) Formatting Code... :clock2:" >> $GITHUB_STEP_SUMMARY
-          cargo fmt >> ${{env.FMT_CODE_RESULT}}
-          cat ${{env.FMT_CODE_RESULT}}
-        if: failure() #only run this if check failed.
+          if [${{steps.check-formatting.outcome}} == "failure"]; then
+            echo "(*) Formatting Code... :clock2:" >> $GITHUB_STEP_SUMMARY
+            cargo fmt >> ${{env.FMT_CODE_RESULT}}
+            cat ${{env.FMT_CODE_RESULT}}
+          else
+            echo "(-) Failed Formatting"
+            exit 1
+          fi
         
       - name: If Format Was Successful, Commit Changes
         run: |
           echo "(*) Commiting Changes :arrow_double_down:" >> $GITHUB_STEP_SUMMARY
+          git config --global user.email "gitbot@github.com"
+          git config --global user.name "Github CI Bot"
           git add .
           if git commit -m "${{env.FMT_COMMIT_MSG}}"; then
             echo "(*) Successfully Commited Changes :100:" >> $GITHUB_STEP_SUMMARY
@@ -80,9 +80,7 @@ jobs:
 
       - name: Parse Clippy Data
         run: |
-          echo "CLIPPY_ISSUES=$(echo ${{steps.run-clippy.outputs.stdout}} | grep -c 'warning: ' || echo 0)" >> $GITHUB_ENV
-          echo "Clippy failed :bangbang: with $CLIPPY_ISSUES issues. ${{steps.run-clippy.outputs.stdout}}" >> ${{env.CLIPPY_RESULT}}
-          cat ${{env.CLIPPY_RESULT}} >> $GITHUB_STEP_SUMMARY
+          echo "Clippy failed :bangbang: ${{steps.run-clippy.outputs.stdout}}" >> ${{env.CLIPPY_RESULT}}
       
       - name: Catch Errors 
         run: |

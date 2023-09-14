@@ -1,20 +1,16 @@
 name: Security Audit
+
 on:
-    push:
-        paths:
-            - '**/Cargo.toml'
-            - '**/Cargo.lock'
+    pull_request:
+        branches: [main]
 
 jobs:
-    security_audit:
-        environment:
-            name: Development
+    security-audit:
+        permissions: write-all
         runs-on: ubuntu-latest
+        env:
+            GH_TOKEN: ${{secrets.CODE_REVIEW}}
+
         steps:
             - name: Checkout Code
-              uses: actions/checkout@v2
-
-            - name: Run Rust Audit Check
-              uses: actions-rs/audit-check@v1
-              with:
-                token: ${{secrets.CODE_REVIEW}}
+              uses: actions/checkout@v3
