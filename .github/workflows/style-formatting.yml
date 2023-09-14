@@ -19,10 +19,13 @@ jobs:
 
     steps:
       - name: Is New Review Branch
-        if: '!startsWith(github.ref, "refs/heads/review")'
         run: |
           echo "(*) Not A Review Branch, Exit"
-          exit 1
+          if ["${{github.ref}}" == *"review"*]; then
+            exit 1
+          else
+            echo "Continue"
+          fi
 
       - name: Checkout Code
         uses: actions/checkout@v4
