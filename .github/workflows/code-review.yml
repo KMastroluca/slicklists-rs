@@ -17,6 +17,8 @@ jobs:
   run-code-review:
     runs-on: ubuntu-latest
     env:
+      FMT_COMMIT_MSG: (CI) - Formatted Code - RustFmt - ${{github.action}} - ${{github.sha}}
+      AFTER_TEST_COMMIT_MSG: (CI) - After Test Cleanup
       FMT_CHECK_RESULT: fmt_check.txt
       FMT_CODE_RESULT: fmt_code.txt
       UNIT_TEST_RESULT: unit.txt
@@ -33,6 +35,14 @@ jobs:
 
       - name: Install Toolchain (Rust Nightly)
         run: |
+
+          echo "### (*) Installing Rustup :rocket:" >> $GITHUB_STEP_SUMMARY
+
+          if curl https://sh.rustup.rs -sSf -y | sh -s; then
+            echo "Successfully Installed Rustup :100:" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Failed To Install Rustup :bangbang:" >> $GITHUB_STEP_SUMMARY
+            
           echo "(*) Installing Rustup"
 
           if curl https://sh.rustup.rs -sSf -y | sh -s; then
@@ -43,38 +53,66 @@ jobs:
           fi
 
           if rustup toolchain install nightly; then
-            echo "(*) Successfully Installed Rust Nightly"
+
+            echo "(*) Successfully Installed Rust Nightly :100:" >> $GITHUB_STEP_SUMMARY
           else
-            echo "(-) Failed To Install Rust Nightly"
+            echo "(-) Failed To Install Rust Nightly :bangbang:" >> $GITHUB_STEP_SUMMARY
           fi
-
-          
-
-
-
+          rustup component add miri
+          rustup component add clippy
+          rustup component add rusrfmt
 
 
       - name: Check Formatting
         id: check-formatting
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: -- --check
-        continue-on-error: true
-
-      - name: Cache Format Check For Later
         run: |
-          echo "(*) Caching Format Check Output"
-          echo "Format Check: ${{steps.check-formatting.outcome}}, Results: ${{steps.check-formatting.outputs}}" >> ${{env.FMT_CHECK_RESULT}}
+          echo "(*) Checking Code Formatting :clock10:" >> $GITHUB_STEP_SUMMARY
+          cargo fmt -- --check >> ${{env.FMT_CHECK_RESULT}}
+          cat ${{env.FMT_CHECK_RESULT}}
+        continue-on-error: true
 
       - name: If Check Fails, Then Format Code
         id: format-code
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
+        run: |
+          echo "(*) Formatting Code... :clock2:" >> $GITHUB_STEP_SUMMARY
+          cargo fmt >> ${{env.FMT_CODE_RESULT}}
+          cat ${{env.FMT_CODE_RESULT}}
         if: failure() #only run this if check failed.
         
-      - name: Cache Format Code For Later
+      - name: If Format Was Successful, Commit Changes
         run: |
-          echo "(*) Caching Format Code"
-          echo "Format Code: ${{steps.format-code.outcome}}, Results: ${{steps.format-code.outputs}}" >> ${{env.FMT_CODE_RESULT}}
+          echo "(*) Commiting Changes :arrow_double_down:" >> $GITHUB_STEP_SUMMARY
+          git add .
+          if git commit -m "${{env.FMT_COMMIT_MSG}}"; then
+            echo "(*) Successfully Commited Changes :100:" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "(-) Failure Commiting Format Changes :bangbang:" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        if: success()
+
+      - name: Clean Environment
+        run: |
+          cargo clean
+      
+      - name: Run Clippy
+        id: run-clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{secrets.CODE_REVIEW}}
+          args: --all-features
+        
+      - name: Count Clippy Issues
+        run: |
+          echo "CLIPPY_ISSUES=$([[ -f $GITHUB_WORKSPACE/clippy.log  ]] && grep -c 'warning:' $GITHUB_WORKSPACE/clippy.log || echo 0)" >> $GITHUB_ENV
+      
+      - name: Check Clippy Issues
+        run: |
+          if [[$CLIPPY_ISSUES -le 3]]; then
+            echo "Clippy Check Passed With $CLIPPY_ISSUES issues, which is okay! :100:" >> $GITHUB_STEP_SUMMARY
+          else 
+            echo "Clippy Check Failed With $CLIPPY_ISSUES isues :bangbang:" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          
+          
