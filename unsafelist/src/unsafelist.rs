@@ -3,24 +3,25 @@ use std::ptr;
 
 pub struct UnsafeList<T> {
     head: Link<T>,
-    tail: *mut Node<T>
+    tail: *mut Node<T>,
 }
 
 type Link<T> = *mut Node<T>;
 
 struct Node<T> {
-    elem:T,
-    next: Link<T>
+    elem: T,
+    next: Link<T>,
 }
 
-
 impl<T> UnsafeList<T> {
-
     pub fn new() -> Self {
-        UnsafeList { head: ptr::null_mut(), tail: ptr::null_mut() }
+        UnsafeList {
+            head: ptr::null_mut(),
+            tail: ptr::null_mut(),
+        }
     }
 
-    pub fn push(&mut self, elem:T) {
+    pub fn push(&mut self, elem: T) {
         unsafe {
             let new_tail = Box::into_raw(Box::new(Node {
                 elem,
@@ -37,9 +38,8 @@ impl<T> UnsafeList<T> {
         }
     }
 
-
     pub fn pop(&mut self) -> Option<T> {
-        unsafe {    
+        unsafe {
             if self.head.is_null() {
                 None
             } else {
@@ -55,19 +55,13 @@ impl<T> UnsafeList<T> {
         }
     }
 
-
     pub fn peek(&self) -> Option<&T> {
-        unsafe {
-            self.head.as_ref().map(|node| &node.elem)
-        }
+        unsafe { self.head.as_ref().map(|node| &node.elem) }
     }
 
     pub fn peek_mut(&mut self) -> Option<&mut T> {
-        unsafe {
-            self.head.as_mut().map(|node| &mut node.elem)
-        }
+        unsafe { self.head.as_mut().map(|node| &mut node.elem) }
     }
-
 }
 
 impl<T> Drop for UnsafeList<T> {
@@ -75,7 +69,6 @@ impl<T> Drop for UnsafeList<T> {
         while let Some(_) = self.pop() {}
     }
 }
-
 
 pub struct IntoIter<T>(UnsafeList<T>);
 
@@ -94,13 +87,17 @@ impl<T> UnsafeList<T> {
 
     pub fn iter(&self) -> Iter<'_, T> {
         unsafe {
-            Iter { next:self.head.as_ref()}
+            Iter {
+                next: self.head.as_ref(),
+            }
         }
     }
 
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         unsafe {
-            IterMut { next: self.head.as_mut()}
+            IterMut {
+                next: self.head.as_mut(),
+            }
         }
     }
 }
@@ -138,9 +135,6 @@ impl<'a, T> Iterator for IterMut<'a, T> {
     }
 }
 
-
-
-
 #[cfg(test)]
 mod test {
 
@@ -148,7 +142,6 @@ mod test {
 
     #[test]
     fn basics() {
-
         let mut list = UnsafeList::new();
 
         // Test Empty List Behaves Correctly
@@ -172,18 +165,14 @@ mod test {
         assert_eq!(list.pop(), Some(5));
         assert_eq!(list.pop(), None);
 
-
         // Check That We Can Bounce Back From Nothing
         list.push(6);
         list.push(7);
 
-
         assert_eq!(list.pop(), Some(6));
         assert_eq!(list.pop(), Some(7));
         assert_eq!(list.pop(), None);
-
     }
-
 
     #[test]
     fn crazy_shit() {
@@ -221,5 +210,4 @@ mod test {
         assert!(list.peek() == Some(&5000));
         list.push(7);
     }
-
 }
