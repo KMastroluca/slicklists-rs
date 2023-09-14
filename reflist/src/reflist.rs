@@ -39,7 +39,7 @@ impl<T> RefList<T> {
     pub fn prepend(&self, elem: T) -> RefList<T> {
         RefList {
             head: Some(Rc::new(Node {
-                elem: elem,
+                elem,
                 next: self.head.clone(),
             })),
         }

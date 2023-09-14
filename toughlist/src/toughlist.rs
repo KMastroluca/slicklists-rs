@@ -33,7 +33,7 @@ impl<T> ToughList<T> {
     pub fn push(&mut self, elem: T) {
         // Create New Node With New Element
         let new_node = Box::new(Node {
-            elem: elem,
+            elem,
             next: self.head.take(), // Grab self.head, while replacing it with I32Link::Empty
         });
 

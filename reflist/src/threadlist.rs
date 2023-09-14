@@ -50,7 +50,7 @@ impl<T> ThreadList<T> {
     pub fn prepend(&self, elem: T) -> ThreadList<T> {
         ThreadList {
             head: Some(Arc::new(Node {
-                elem: elem,
+                elem,
                 next: self.head.clone(),
             })),
         }
