@@ -330,3 +330,96 @@ The module includes tests for basic operations such as `push`, `pop`, `peek`, an
 
 ---
 
+## GList Documentation
+
+The GList is a generic data structure in Rust that represents a grow-only list. It allows for inserting elements but does not support deletion. This documentation will provide an overview of the GList struct and its methods.
+
+### Struct GList<T>
+
+**Fields**
+- `front: Link<T>`: Represents the front of the list.
+- `back: Link<T>`: Represents the back of the list.
+- `len: usize`: Represents the length of the list.
+- `_boo: PhantomData<T>`: A marker field that indicates that the GList struct is parameterized over type T.
+
+**Methods**
+
+1. `new() -> GList<T>`
+   - Creates a new empty GList instance.
+   - Returns the newly created GList instance.
+
+2. `len() -> usize`
+   - Returns the length of the list.
+
+3. `push_front(elem: T)`
+   - Inserts an element at the front of the list.
+   - Parameters:
+     - `elem: T`: The element to be inserted.
+   - Example:
+     ```rust
+    let mut list = GList::new(); list.push_front(1);
+    ```
+
+    
+4. `push_back(elem: T)`
+   - Inserts an element at the back of the list.
+   - Parameters:
+     - `elem: T`: The element to be inserted.
+   - Example:
+     ```rust
+     rust let mut list = GList::new(); list.push_back(2);
+     ```
+     
+5. `pop_front() -> Option<T>`
+   - Removes and returns the element at the front of the list, if it exists.
+   - Returns:
+     - `Some(elem)`: The removed element, wrapped in an `Option`, if the list is not empty.
+     - `None`: If the list is empty.
+   - Example:
+     ```rust
+     let mut list = GList::new(); list.push_front(1); let front = list.pop_front();
+     ```
+     6. `pop_back() -> Option<T>`
+   - Removes and returns the element at the back of the list, if it exists.
+   - Returns:
+     - `Some(elem)`: The removed element, wrapped in an `Option`, if the list is not empty.
+     - `None`: If the list is empty.
+   - Example:
+     ```rust
+      let mut list = GList::new(); list.push_back(2); let back = list.pop_back();
+    ```
+    7. `front() -> Option<&T>`
+   - Returns a reference to the element at the front of the list, if it exists.
+   - Returns:
+     - `Some(&elem)`: A reference to the element, wrapped in an `Option`, if the list is not empty.
+     - `None`: If the list is empty.
+   - Example:
+     ```rust
+     let list = GList::new(); let front = list.front();
+     ```
+     8. `front_mut() -> Option<&mut T>`
+   - Returns a mutable reference to the element at the front of the list, if it exists.
+   - Returns:
+     - `Some(&mut elem)`: A mutable reference to the element, wrapped in an `Option`, if the list is not empty.
+     - `None`: If the list is empty.
+   - Example:
+     ```rust
+     let mut list = GList::new(); let front = list.front_mut();
+     ```
+     9. `back() -> Option<&T>`
+   - Returns a reference to the element at the back of the list, if it exists.
+   - Returns:
+     - `Some(&elem)`: A reference to the element, wrapped in an `Option`, if the list is not empty.
+     - `None`: If the list is empty.
+   - Example:
+     ```rust
+     let list = GList::new(); let back = list.back().unwrap();
+     ```
+     
+10. `back_mut() -> Option<&mut T>`
+   - Returns a mutable reference to the element at the back of the list, if it exists.
+     ```rust
+     let list = GList::new(); let mut back = list.back_mut().unwrap();
+     ```
+
+ 
