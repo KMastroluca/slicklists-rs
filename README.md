@@ -87,13 +87,15 @@ pub struct ThreadList<T> { head: Link<T>, }
 The `Link<T>` is an enumeration that represents either `None` (if the link is empty) or a linked list node containing an element of type `T` and a reference to the next node.
 
 ```rust 
-type Link<T> = Option<Arc<Node<T>>>;```
+type Link<T> = Option<Arc<Node<T>>>;
+```
 
 
 The `Node<T>` struct represents a node in the linked list, containing an element of type `T` and a reference to the next node.
 
 ```rust 
-struct Node<T> { elem: T, next: Link<T>, }```
+struct Node<T> { elem: T, next: Link<T>, }
+```
 
 ## Methods
 
@@ -102,7 +104,8 @@ The `ThreadList` struct has several methods:
 - `new()`: creates a new, empty `ThreadList<T>`.
 
 ```rust 
-pub fn new() -> Self { ThreadList { head: None } }```
+pub fn new() -> Self { ThreadList { head: None } }
+```
 
 - `prepend(elem: T)`: creates a new `ThreadList<T>` with the specified element as its head, and the original head as its tail.
 
@@ -111,7 +114,8 @@ pub fn prepend(&self, elem: T) -> ThreadList<T> {
     ThreadList { 
         head: Some(Arc::new(Node { elem, next: self.head.clone(), })), 
     } 
-}```
+}
+```
 
 - `tail()`: creates a new `ThreadList<T>` with the same head as the original, but with the tail set to the original tail.
 
@@ -120,14 +124,16 @@ pub fn tail(&self) -> ThreadList<T> {
     ThreadList { 
         head: self.head.as_ref().and_then(|node| node.next.clone()), 
     } 
-}```
+}
+```
 
 
 - `head()`: returns the element at the head of the list, or `None` if the list is empty.
 
 ```rust pub fn head(&self) -> Option<&T> { 
     self.head.as_ref().map(|node| &node.elem) 
-}```
+}
+```
 
 ## Iterator Implementation
 
@@ -138,7 +144,8 @@ impl<T> ThreadList<T> {
      pub fn iter(&self) -> Iter<'_, T> { 
         Iter { next: self.head.as_deref(), } 
      } 
-}```
+}
+```
 
 The `Iter<'a, T>` struct, and the `Iterator` trait implementation for `Iter<'a, T>`:
 
@@ -154,7 +161,8 @@ impl<'a, T> Iterator for Iter<'a, T> {
             &node.elem
         })
     }
-}```
+}
+```
 
 ## Recursive Destructor
 
