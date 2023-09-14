@@ -1,6 +1,5 @@
-
-use std::rc::Rc;
 use std::cell::{Ref, RefCell, RefMut};
+use std::rc::Rc;
 
 pub struct DubDeque<T> {
     head: Link<T>,
@@ -12,27 +11,28 @@ type Link<T> = Option<Rc<RefCell<Node<T>>>>;
 struct Node<T> {
     elem: T,
     next: Link<T>,
-    prev: Link<T>
+    prev: Link<T>,
 }
 
-
 impl<T> Node<T> {
-    fn new(elem:T) -> Rc<RefCell<Self>> {
+    fn new(elem: T) -> Rc<RefCell<Self>> {
         Rc::new(RefCell::new(Node {
-            elem: elem,
+            elem,
             next: None,
-            prev: None
+            prev: None,
         }))
     }
 }
 
 impl<T> DubDeque<T> {
     pub fn new() -> Self {
-        DubDeque { head: None, tail: None }
+        DubDeque {
+            head: None,
+            tail: None,
+        }
     }
 
     pub fn push_front(&mut self, elem: T) {
-
         let new_head = Node::new(elem);
 
         match self.head.take() {
@@ -48,9 +48,7 @@ impl<T> DubDeque<T> {
                 self.head = Some(new_head);
             }
         }
-
     }
-
 
     pub fn pop_front(&mut self) -> Option<T> {
         self.head.take().map(|old_head| {
@@ -67,17 +65,13 @@ impl<T> DubDeque<T> {
         })
     }
 
-
-
     pub fn peek_front(&self) -> Option<Ref<T>> {
-        self.head.as_ref().map(|node| {
-            Ref::map(node.borrow(), |node| &node.elem)
-        })
+        self.head
+            .as_ref()
+            .map(|node| Ref::map(node.borrow(), |node| &node.elem))
     }
 
-
     pub fn push_back(&mut self, elem: T) {
-
         let new_tail = Node::new(elem);
 
         match self.tail.take() {
@@ -93,7 +87,6 @@ impl<T> DubDeque<T> {
                 self.head = Some(new_tail);
             }
         }
-
     }
 
     pub fn pop_back(&mut self) -> Option<T> {
@@ -109,35 +102,33 @@ impl<T> DubDeque<T> {
             }
             Rc::try_unwrap(old_tail).ok().unwrap().into_inner().elem
         })
-    } 
+    }
 
     pub fn peek_back(&self) -> Option<Ref<T>> {
-        self.tail.as_ref().map(|node| {
-            Ref::map(node.borrow(), |node| &node.elem)
-        })
+        self.tail
+            .as_ref()
+            .map(|node| Ref::map(node.borrow(), |node| &node.elem))
     }
 
     pub fn peek_back_mut(&mut self) -> Option<RefMut<T>> {
-        self.tail.as_ref().map(|node| {
-            RefMut::map(node.borrow_mut(), |node| &mut node.elem)
-        })
+        self.tail
+            .as_ref()
+            .map(|node| RefMut::map(node.borrow_mut(), |node| &mut node.elem))
     }
 
     pub fn peek_front_mut(&mut self) -> Option<RefMut<T>> {
-        self.tail.as_ref().map(|node| {
-            RefMut::map(node.borrow_mut(), |node| &mut node.elem)
-        })
-    } 
-
-}
-
-
-impl<T> Drop for DubDeque<T> {
-    fn drop(&mut self) { // Pop all the nodes out!
-        while self.pop_front().is_some() {}
+        self.tail
+            .as_ref()
+            .map(|node| RefMut::map(node.borrow_mut(), |node| &mut node.elem))
     }
 }
 
+impl<T> Drop for DubDeque<T> {
+    fn drop(&mut self) {
+        // Pop all the nodes out!
+        while self.pop_front().is_some() {}
+    }
+}
 
 pub struct IntoIter<T>(DubDeque<T>);
 
@@ -160,13 +151,9 @@ impl<T> DoubleEndedIterator for IntoIter<T> {
     }
 }
 
-
-
 #[cfg(test)]
 mod test {
     use super::DubDeque;
-
-
 
     #[test]
     fn basics() {
@@ -195,9 +182,7 @@ mod test {
         // Check Exaustion
         assert_eq!(dd.pop_front(), Some(1));
         assert_eq!(dd.pop_front(), None);
-
     }
-
 
     #[test]
     fn into_iter() {
@@ -213,5 +198,4 @@ mod test {
         assert_eq!(iter.next_back(), None);
         assert_eq!(iter.next(), None);
     }
-
 }

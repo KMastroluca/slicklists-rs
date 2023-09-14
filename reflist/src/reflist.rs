@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-/* 
+/*
 The RefList struct has the following methods:
 
 new(): Create a new empty list.
@@ -21,7 +21,7 @@ pub struct RefList<T> {
 // A type representing a connection between nodes in the list, using the Rc trait
 type Link<T> = Option<Rc<Node<T>>>;
 
-// A struct representing a node in the list, 
+// A struct representing a node in the list,
 // containing a reference to the element and a reference to the next node in the list
 struct Node<T> {
     elem: T,
@@ -29,7 +29,6 @@ struct Node<T> {
 }
 
 impl<T> RefList<T> {
-
     // Create a new empty list
     pub fn new() -> Self {
         RefList { head: None }
@@ -39,7 +38,7 @@ impl<T> RefList<T> {
     pub fn prepend(&self, elem: T) -> RefList<T> {
         RefList {
             head: Some(Rc::new(Node {
-                elem: elem,
+                elem,
                 next: self.head.clone(),
             })),
         }
@@ -56,7 +55,6 @@ impl<T> RefList<T> {
     pub fn head(&self) -> Option<&T> {
         self.head.as_ref().map(|node| &node.elem)
     }
-
 }
 
 // Implementation of the Iter style iterator
@@ -102,7 +100,6 @@ impl<T> Drop for RefList<T> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod test {

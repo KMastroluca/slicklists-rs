@@ -16,7 +16,6 @@ enum I32Link {
     More(Box<I32Node>),
 }
 
-
 // Implement List
 impl I32List {
     // Create A New, Empty List
@@ -30,7 +29,7 @@ impl I32List {
     pub fn push(&mut self, elem: i32) {
         // Create New Node With New Element
         let new_node = Box::new(I32Node {
-            elem: elem,
+            elem,
             next: mem::replace(&mut self.head, I32Link::Empty), // Grab self.head, while replacing it with I32Link::Empty
         });
 
@@ -50,7 +49,6 @@ impl I32List {
         }
     }
 
-
     // Private: Pop A Node Off The Stack For Use With Custom Drop Fn
     fn pop_node(&mut self) -> I32Link {
         mem::replace(&mut self.head, I32Link::Empty)
@@ -64,7 +62,6 @@ impl Drop for I32List {
         while let I32Link::More(_) = self.pop_node() {}
     }
 }
-
 
 #[cfg(test)]
 mod test {
