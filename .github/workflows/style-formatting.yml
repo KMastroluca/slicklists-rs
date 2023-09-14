@@ -1,4 +1,4 @@
-name: Code Review
+name: Style & Formatting
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
   
 
 jobs:
-  run-code-review:
+  style-and-formatting:
     runs-on: ubuntu-latest
     env:
       FMT_COMMIT_MSG: (CI) - Formatted Code - RustFmt - ${{github.action}} - ${{github.sha}}
