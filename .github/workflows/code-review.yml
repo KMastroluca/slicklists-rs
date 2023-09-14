@@ -75,9 +75,7 @@ jobs:
 
       - name: Parse Clippy Data
         run: |
-          echo "CLIPPY_ISSUES=$(echo ${{steps.run-clippy.outputs.stdout}} | grep -c 'warning: ' || echo 0)" >> $GITHUB_ENV
-          echo "Clippy failed :bangbang: with $CLIPPY_ISSUES issues. ${{steps.run-clippy.outputs.stdout}}" >> ${{env.CLIPPY_RESULT}}
-          cat ${{env.CLIPPY_RESULT}} >> $GITHUB_STEP_SUMMARY
+          echo "Clippy failed :bangbang: ${{steps.run-clippy.outputs.stdout}}" >> ${{env.CLIPPY_RESULT}}
       
       - name: Catch Errors 
         run: |
