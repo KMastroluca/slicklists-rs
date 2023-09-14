@@ -44,14 +44,11 @@ jobs:
             exit 1
           fi
 
-          if rustup toolchain install nightly; then
+          if rustup toolchain install nightly --component miri; then
             echo "(*) Successfully Installed Rust Nightly :100:" >> $GITHUB_STEP_SUMMARY
           else
             echo "(-) Failed To Install Rust Nightly :bangbang:" >> $GITHUB_STEP_SUMMARY
           fi
-          rustup component add miri
-          rustup component add clippy
-          rustup component add rusrfmt
 
 
 
