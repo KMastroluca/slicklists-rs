@@ -14,7 +14,7 @@ jobs:
   DeleteReviewBranch:
     env:
         GH_TOKEN: ${{secrets.CODE_REVIEW}}
-
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Get Branch Reference

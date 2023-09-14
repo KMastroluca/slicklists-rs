@@ -9,6 +9,7 @@ on:
 jobs:
   style-and-formatting:
     runs-on: ubuntu-latest
+    permissions: write-all
     env:
       FMT_COMMIT_MSG: (CI) - Formatted Code - RustFmt - ${{github.action}} - ${{github.sha}}
       AFTER_TEST_COMMIT_MSG: (CI) - After Test Cleanup
