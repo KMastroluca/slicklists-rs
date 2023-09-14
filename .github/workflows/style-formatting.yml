@@ -42,17 +42,13 @@ jobs:
           cat ${{env.FMT_CHECK_RESULT}}
         continue-on-error: true
 
-      - name: If Check Fails, Then Format Code
+      - name: Format Code
         id: format-code
         run: |
-          if ["${{steps.check-formatting.outcome}}" == "failure"]; then
-            echo "(*) Formatting Code... :clock2:" >> $GITHUB_STEP_SUMMARY
-            cargo fmt >> ${{env.FMT_CODE_RESULT}}
-            cat ${{env.FMT_CODE_RESULT}}
-          else
-            echo "(-) Failed Formatting"
-            exit 1
-          fi
+          echo "(*) Formatting Code... :clock2:" >> $GITHUB_STEP_SUMMARY
+          cargo fmt >> ${{env.FMT_CODE_RESULT}}
+          cat ${{env.FMT_CODE_RESULT}}
+
         
       - name: If Format Was Successful, Commit Changes
         run: |
