@@ -89,22 +89,21 @@ jobs:
       
       - name: Run Clippy
         id: run-clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{secrets.CODE_REVIEW}}
-          args: --all-features
-        
-      - name: Count Clippy Issues
         run: |
-          echo "CLIPPY_ISSUES=$([[ -f $GITHUB_WORKSPACE/clippy.log  ]] && grep -c 'warning:' $GITHUB_WORKSPACE/clippy.log || echo 0)" >> $GITHUB_ENV
+          cargo clippy --all-targets -- -D warnings
+        continue-on-error: true
+
+      - name: Parse Clippy Data
+        run: |
+          echo "CLIPPY_ISSUES=$(echo ${{steps.run-clippy.outputs.stdout}} | grep -c 'warning: ' || echo 0)" >> $GITHUB_ENV
+          echo "Clippy failed :bangbang: with $CLIPPY_ISSUES issues. ${{steps.run-clippy.outputs.stdout}}" >> ${{env.CLIPPY_RESULT}}
+          cat ${{env.CLIPPY_RESULT}} >> $GITHUB_STEP_SUMMARY
       
-      - name: Check Clippy Issues
+      - name: Catch Errors 
         run: |
-          if [[$CLIPPY_ISSUES -le 3]]; then
-            echo "Clippy Check Passed With $CLIPPY_ISSUES issues, which is okay! :100:" >> $GITHUB_STEP_SUMMARY
-          else 
-            echo "Clippy Check Failed With $CLIPPY_ISSUES isues :bangbang:" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "### Exiting Because Clippy Warnings Were Found"
+          exit 1
+        if: failure()
 
           
           
