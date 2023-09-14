@@ -15,9 +15,6 @@ jobs:
       AFTER_TEST_COMMIT_MSG: (CI) - After Test Cleanup
       FMT_CHECK_RESULT: fmt_check.txt
       FMT_CODE_RESULT: fmt_code.txt
-      UNIT_TEST_RESULT: unit.txt
-      MIRI_TEST_RESULT: miri.txt
-      SEC_AUDIT_RESULT: sec.txt
       CLIPPY_RESULT: clippy.txt
 
     steps:
@@ -37,7 +34,6 @@ jobs:
       - name: Check Formatting
         id: check-formatting
         run: |
-          echo "(*) Checking Code Formatting :clock10:" >> $GITHUB_STEP_SUMMARY
           cargo fmt -- --check >> ${{env.FMT_CHECK_RESULT}}
           cat ${{env.FMT_CHECK_RESULT}}
         continue-on-error: true
@@ -84,5 +80,26 @@ jobs:
           exit 1
         if: failure()
 
+      - name: Create PR Comments
+        if: github.event_name == 'pull_request'
+        run: |
+            for file in ${{env.FMT_CHECK_RESULT}} ${{env.FMT_CODE_RESULT}} ${{env.CLIPPY_RESULT}}; do
+              if [ -f "$file"]; then
+                curl -X POST \
+                  -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  -d "{\"body\": \"$(cat $file)\"}" \
+                  "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+              fi
+            done
+
+      - name: Delete Files
+        run: |
+          rm -rf ${{env.FMT_CHECK_RESULT}} ${{env.FMT_CODE_RESULT}} ${{env.CLIPPY_RESULT}}
+      
+      - name: Commit Changes
+        run: |
+          git add .
+          git commit -m "${{env.FMT_COMMIT_MSG}}"
           
           
