@@ -2,16 +2,9 @@ name: Code Review
 
 on:
   workflow_dispatch:
-  pull_request_target:
-    branches: [main]
   pull_request:
-    branches:
-      - 'review*'
-      - 'main'
-    types: [opened, synchronize]
-  push:
-    branches:
-      - 'review*'
+    branches: [main]
+  
 
 jobs:
   run-code-review:
