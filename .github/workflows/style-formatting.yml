@@ -45,7 +45,7 @@ jobs:
       - name: If Check Fails, Then Format Code
         id: format-code
         run: |
-          if [${{steps.check-formatting.outcome}} == "failure"]; then
+          if ["${{steps.check-formatting.outcome}}" == "failure"]; then
             echo "(*) Formatting Code... :clock2:" >> $GITHUB_STEP_SUMMARY
             cargo fmt >> ${{env.FMT_CODE_RESULT}}
             cat ${{env.FMT_CODE_RESULT}}
