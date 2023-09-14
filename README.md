@@ -2,7 +2,7 @@
 
 [![Security Audit](https://github.com/KMastroluca/slicklists-rs/actions/workflows/security-audit.yml/badge.svg?branch=main)](https://github.com/KMastroluca/slicklists-rs/actions/workflows/security-audit.yml)
 
-[![Code Review](https://github.com/KMastroluca/slicklists-rs/actions/workflows/code-review.yml/badge.svg?branch=main)](https://github.com/KMastroluca/slicklists-rs/actions/workflows/code-review.yml)
+[![Style & Formatting](https://github.com/KMastroluca/slicklists-rs/actions/workflows/style-formatting.yml/badge.svg)](https://github.com/KMastroluca/slicklists-rs/actions/workflows/style-formatting.yml)
 
 Welcome to **Slicklist-rs**, a repository showcasing my journey through the world of Rust and data structures. This project is primarily a CV piece, demonstrating my abilities as a programmer. However, it is important to note that the data structures presented here are not intended for practical use.
 
