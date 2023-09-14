@@ -1,18 +1,11 @@
-
-
-
-fn opaque_read(val:&i32) {
+fn opaque_read(val: &i32) {
     println!("{}", val);
 }
 
-
 use std::cell::UnsafeCell;
 
-
 fn main() {
-    
-
-    /* 
+    /*
     unsafe {
 
         let mut data = [0; 10];
@@ -24,14 +17,14 @@ fn main() {
         let ptr4_at_1 = ptr2_all.add(1); // Reference to 1th element
         let ref5_at_0 = &mut *ptr3_at_0; // Ptr to 1st element
         let ref6_at_1 = &mut *ptr4_at_1; // Ptr To 0th Element
-        
-    
+
+
         // A Jumbled Hash Of Pointer Usages
         *ref6_at_1 += 6;
         *ref5_at_0 += 5;
         *ptr4_at_1 += 4;
         *ptr3_at_0 += 3;
-    
+
 
         // Modify All The Pointers In A Loop
         for idx in 0..10 {
@@ -46,27 +39,17 @@ fn main() {
 
         // Should Print [3, 3, 0, .....]
         println!("{:#?}", &data[..]);
-    
+
     }
     */
 
-
     unsafe {
-
-
         let mut data = Box::new(10);
         let ptr1 = (&mut *data) as *mut i32;
 
         *ptr1 += 1;
         *data += 10;
-    
 
         println!("{}", data);
-
-    }    
-    
-
-
-
-
+    }
 }
