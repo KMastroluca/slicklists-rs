@@ -13,7 +13,7 @@ jobs:
 
   DeleteReviewBranch:
     env:
-        GH_TOKEN: ${{github.token}}
+        GH_TOKEN: ${{secrets.CODE_REVIEW}}
 
     runs-on: ubuntu-latest
     steps:
@@ -24,11 +24,4 @@ jobs:
         if: github.event.pull_request.merged == true
         run: |
             echo "Deleting Branch"
-            if ["${{github.event.pull_request.merged}}" = "false"]
-            then
-                echo "PR Was Closed Without Merge. Deleting Branch..."
-                git push origin --delete ${{github.head_ref}}
-            else
-                echo "PR Was Merged, Also Deleting Branch, But I Might Want To Do Another Thing Here So We Keep The Logic"
-                git push origin --delete ${{github.head_ref}}
-            fi
+            git push origin --delete ${{github.head_ref}}
