@@ -32,11 +32,27 @@ jobs:
       
 
       - name: Install Toolchain (Rust Nightly)
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          components: rustfmt, clippy, miri
+        run: |
+          echo "(*) Installing Rustup"
+
+          if curl https://sh.rustup.rs -sSf -y | sh -s; then
+            echo "Successfully Installed Rustup"
+          else
+            echo "Failed To Install Rustup"
+            exit 1
+          fi
+
+          if rustup toolchain install nightly; then
+            echo "(*) Successfully Installed Rust Nightly"
+          else
+            echo "(-) Failed To Install Rust Nightly"
+          fi
+
+          
+
+
+
+
 
       - name: Check Formatting
         id: check-formatting
