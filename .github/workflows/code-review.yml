@@ -35,16 +35,25 @@ jobs:
 
       - name: Install Toolchain (Rust Nightly)
         run: |
+
           echo "### (*) Installing Rustup :rocket:" >> $GITHUB_STEP_SUMMARY
 
           if curl https://sh.rustup.rs -sSf -y | sh -s; then
             echo "Successfully Installed Rustup :100:" >> $GITHUB_STEP_SUMMARY
           else
             echo "Failed To Install Rustup :bangbang:" >> $GITHUB_STEP_SUMMARY
+            
+          echo "(*) Installing Rustup"
+
+          if curl https://sh.rustup.rs -sSf -y | sh -s; then
+            echo "Successfully Installed Rustup"
+          else
+            echo "Failed To Install Rustup"
             exit 1
           fi
 
           if rustup toolchain install nightly; then
+
             echo "(*) Successfully Installed Rust Nightly :100:" >> $GITHUB_STEP_SUMMARY
           else
             echo "(-) Failed To Install Rust Nightly :bangbang:" >> $GITHUB_STEP_SUMMARY
@@ -52,7 +61,6 @@ jobs:
           rustup component add miri
           rustup component add clippy
           rustup component add rusrfmt
-
 
 
       - name: Check Formatting
