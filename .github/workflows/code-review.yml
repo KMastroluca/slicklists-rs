@@ -59,6 +59,8 @@ jobs:
       - name: If Format Was Successful, Commit Changes
         run: |
           echo "(*) Commiting Changes :arrow_double_down:" >> $GITHUB_STEP_SUMMARY
+          git config --global user.email "gitbot@github.com"
+          git config --global user.name "Github CI Bot"
           git add .
           if git commit -m "${{env.FMT_COMMIT_MSG}}"; then
             echo "(*) Successfully Commited Changes :100:" >> $GITHUB_STEP_SUMMARY
