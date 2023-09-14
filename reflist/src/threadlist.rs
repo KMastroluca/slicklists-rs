@@ -5,14 +5,12 @@ use std::sync::Arc;
 * ThreadList is a pub struct that represents a singly linked list of elements of type T.
 * It contains a single field, head, which is of type Link<T>.
 *
-* Link<T> is an enumeration that represents either None (if the link is empty) 
+* Link<T> is an enumeration that represents either None (if the link is empty)
 * or a linked list node containing an element of type T and a reference to the next node.
 *
-* Node<T> is a struct that represents a node in the linked list, 
+* Node<T> is a struct that represents a node in the linked list,
 * containing an element of type T and a reference to the next node.
 */
-
-
 
 pub struct ThreadList<T> {
     head: Link<T>,
@@ -30,15 +28,15 @@ struct Node<T> {
 *
 * new() creates a new, empty ThreadList<T>.
 *
-* prepend(elem: T) creates a new ThreadList<T> with the specified element 
+* prepend(elem: T) creates a new ThreadList<T> with the specified element
 * as its head, and the original head as its tail.
-* 
+*
 * tail() creates a new ThreadList<T> with the same head as the original, but with the tail set to the original tail.
-* 
+*
 * head() returns the element at the head of the list, or None if the list is empty.
-* 
-* The ThreadList struct also implements the Iterator trait, 
-* which allows it to be iterated over. The iter() method returns an Iter<'_, T> object, 
+*
+* The ThreadList struct also implements the Iterator trait,
+* which allows it to be iterated over. The iter() method returns an Iter<'_, T> object,
 * which can be used to iterate over the elements of the list.
 */
 
@@ -93,12 +91,12 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
 /*
 * The Recursive Destructor for ThreadList<T> is implemented as a Drop trait implementation.
-* 
-* When the ThreadList is dropped, it moves the current head into a mutable variable 
-* and then loops over each node, taking ownership of that node and letting the last 
+*
+* When the ThreadList is dropped, it moves the current head into a mutable variable
+* and then loops over each node, taking ownership of that node and letting the last
 * one drop.
-* 
-* This ensures that the linked list is properly deallocated, 
+*
+* This ensures that the linked list is properly deallocated,
 * even if there are still references to the nodes.
 */
 impl<T> Drop for ThreadList<T> {
