@@ -21,7 +21,6 @@ jobs:
         uses: actions/checkout@v2 
 
       - name: Delete Branch
-        if: github.event.pull_request.merged == true
         run: |
             echo "Deleting Branch"
             git push origin --delete ${{github.head_ref}}
