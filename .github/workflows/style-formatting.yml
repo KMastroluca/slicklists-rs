@@ -28,10 +28,10 @@ jobs:
 
       - name: Install Toolchain (Rust Nightly)
         run: |
+
           echo "### (*) Installing Rustup :rocket:" >> $GITHUB_STEP_SUMMARY
           curl https://sh.rustup.rs -sSf -y | sh -s
           rustup toolchain install nightly --component miri
-
 
       - name: Check Formatting
         id: check-formatting
